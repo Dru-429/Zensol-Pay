@@ -45,7 +45,10 @@ export const api = {
   resolveUser: (username) =>
     request(`/api/users/resolve?username=${encodeURIComponent(username)}`),
   userProfile: (id) => request(`/api/users/${encodeURIComponent(id)}`),
+  updateUserProfile: (id, body) =>
+    request(`/api/users/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify(body) }),
   contacts: () => request('/api/contacts'),
+  myTransfers: () => request('/api/transfers/mine'),
   transfersWith: (userId) => request(`/api/transfers/with/${userId}`),
   recordTransfer: (body) => request('/api/transfers', { method: 'POST', body: JSON.stringify(body) }),
   messagesWith: (userId) => request(`/api/messages/with/${userId}`),

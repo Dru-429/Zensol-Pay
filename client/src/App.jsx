@@ -4,6 +4,7 @@ import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Transfer from './pages/Transfer.jsx';
+import Profile from './pages/Profile.jsx';
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
@@ -36,6 +37,14 @@ export default function App() {
         element={
           <PrivateRoute>
             <Transfer />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/profile/:id"
+        element={
+          <PrivateRoute>
+            <Profile />
           </PrivateRoute>
         }
       />

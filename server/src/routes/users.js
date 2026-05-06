@@ -3,6 +3,28 @@ import { prisma } from '../lib/prisma.js';
 import { authMiddleware } from '../middleware/auth.js';
 
 export const usersRouter = Router();
+const LINKS_MARKER = '\n\n---links---\n';
+
+function parseProfileBio(rawBio) {
+  if (!rawBio) return { bio: '', links: [] };
+  const [bioPart, linksPart] = String(rawBio).split(LINKS_MARKER);
+  if (!linksPart) return { bio: String(rawBio), links: [] };
+  const links = linksPart
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+  return { bio: (bioPart || '').trim(), links };
+}
+
+function serializeProfileBio(bio, links) {
+  const cleanBio = String(bio || '').trim();
+  const cleanLinks = Array.isArray(links)
+    ? links.map((link) => String(link || '').trim()).filter(Boolean)
+    : [];
+  if (cleanLinks.length === 0) return cleanBio;
+  const body = cleanLinks.join('\n');
+  return `${cleanBio}${LINKS_MARKER}${body}`.trim();
+}
 
 /** Resolve @username → primary Solana public key */
 usersRouter.get('/resolve', async (req, res) => {
@@ -44,15 +66,52 @@ usersRouter.get('/:id', authMiddleware, async (req, res) => {
       },
     });
     if (!user) return res.status(404).json({ error: 'Not found' });
+    const parsed = parseProfileBio(user.profile?.bio);
     res.json({
       id: user.id,
       username: user.username,
-      profile: user.profile,
+      profile: {
+        ...user.profile,
+        bio: parsed.bio,
+        links: parsed.links,
+      },
       wallets: user.wallets,
       recentTransfers: user.receivedTransfers,
     });
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: 'Failed' });
+  }
+});
+
+usersRouter.put('/:id', authMiddleware, async (req, res) => {
+  try {
+    if (req.user.sub !== req.params.id) return res.status(403).json({ error: 'Forbidden' });
+    const { full_name, avatar_url, bio, links } = req.body || {};
+    const profile = await prisma.userProfile.upsert({
+      where: { userId: req.params.id },
+      create: {
+        userId: req.params.id,
+        full_name: full_name ?? null,
+        avatar_url: avatar_url ?? null,
+        bio: serializeProfileBio(bio, links),
+      },
+      update: {
+        full_name: full_name ?? undefined,
+        avatar_url: avatar_url ?? undefined,
+        bio: serializeProfileBio(bio, links),
+      },
+    });
+    const parsed = parseProfileBio(profile.bio);
+    res.json({
+      profile: {
+        ...profile,
+        bio: parsed.bio,
+        links: parsed.links,
+      },
+    });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Failed to update profile' });
   }
 });

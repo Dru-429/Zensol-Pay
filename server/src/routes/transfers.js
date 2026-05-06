@@ -59,3 +59,24 @@ transfersRouter.get('/with/:userId', async (req, res) => {
     res.status(500).json({ error: 'Failed' });
   }
 });
+
+transfersRouter.get('/mine', async (req, res) => {
+  try {
+    const me = req.user.sub;
+    const transfers = await prisma.transfer.findMany({
+      where: {
+        OR: [{ sender_id: me }, { receiver_id: me }],
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 30,
+      include: {
+        sender: { select: { id: true, username: true } },
+        receiver: { select: { id: true, username: true } },
+      },
+    });
+    res.json({ transfers });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Failed to load transfers' });
+  }
+});
