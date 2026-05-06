@@ -19,7 +19,7 @@ npx prisma db push
 npm run db:seed
 npm run dev
 ```
-
+//Seed OK. Demo login: alice@solpay.demo / demo1234
 API: `http://localhost:4000`
 
 ## 2. Client
