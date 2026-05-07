@@ -22,9 +22,11 @@ function linkMeta(raw) {
   const value = raw.trim();
   const url = normalizeUrl(value);
   const lower = url.toLowerCase();
+  const xHandleMatch = url.match(/(?:x\.com|twitter\.com)\/([A-Za-z0-9_]+)/i);
+  const resolvedXHandle = xHandleMatch?.[1] ? `@${xHandleMatch[1]}` : null;
 
   if (lower.includes('twitter.com') || lower.includes('x.com')) {
-    return { url, label: value.startsWith('@') ? value : '@handle', Icon: FiTwitter };
+    return { url, label: value.startsWith('@') ? value : resolvedXHandle || '@handle', Icon: FiTwitter };
   }
 
   if (lower.includes('linkedin.com') || lower.startsWith('https://in/')) {
@@ -208,7 +210,7 @@ export default function Profile() {
                 />
                 <textarea
                   className="min-h-24 w-full rounded-xl border border-white/10 bg-surface px-3 py-2 text-sm outline-none ring-accent focus:ring-1"
-                  placeholder="Whereabouts / bio"
+                  placeholder="Bio..."
                   value={form.bio}
                   onChange={(e) => setForm((prev) => ({ ...prev, bio: e.target.value }))}
                 />

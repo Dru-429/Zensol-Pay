@@ -32,12 +32,53 @@ messagesRouter.post('/', async (req, res) => {
     if (!receiver_id || !text) {
       return res.status(400).json({ error: 'receiver_id and text required' });
     }
+    const [sender, receiver] = await Promise.all([
+      prisma.user.findUnique({
+        where: { id: req.user.sub },
+        select: { id: true, username: true },
+      }),
+      prisma.user.findUnique({
+        where: { id: receiver_id },
+        select: { id: true, username: true },
+      }),
+    ]);
+    if (!sender || !receiver) {
+      return res.status(404).json({ error: 'User not found' });
+    }
     const msg = await prisma.message.create({
       data: {
         sender_id: req.user.sub,
         receiver_id,
         text: String(text),
         related_transfer_id: related_transfer_id || null,
+      },
+    });
+    await prisma.contact.upsert({
+      where: {
+        owner_id_contact_user_id: { owner_id: sender.id, contact_user_id: receiver.id },
+      },
+      create: {
+        owner_id: sender.id,
+        contact_user_id: receiver.id,
+        display_name: receiver.username,
+        is_recent: true,
+      },
+      update: {
+        is_recent: true,
+      },
+    });
+    await prisma.contact.upsert({
+      where: {
+        owner_id_contact_user_id: { owner_id: receiver.id, contact_user_id: sender.id },
+      },
+      create: {
+        owner_id: receiver.id,
+        contact_user_id: sender.id,
+        display_name: sender.username,
+        is_recent: true,
+      },
+      update: {
+        is_recent: true,
       },
     });
     res.json(msg);

@@ -7,7 +7,12 @@ const LINKS_MARKER = '\n\n---links---\n';
 
 function parseProfileBio(rawBio) {
   if (!rawBio) return { bio: '', links: [] };
-  const [bioPart, linksPart] = String(rawBio).split(LINKS_MARKER);
+  const text = String(rawBio);
+  const plainMarker = '---links---\n';
+  const hasStandardMarker = text.includes(LINKS_MARKER);
+  const hasPlainMarker = text.startsWith(plainMarker) || text.includes(`\n${plainMarker}`);
+  const markerToUse = hasStandardMarker ? LINKS_MARKER : hasPlainMarker ? `\n${plainMarker}` : null;
+  const [bioPart, linksPart] = markerToUse ? text.split(markerToUse) : [text, null];
   if (!linksPart) return { bio: String(rawBio), links: [] };
   const links = linksPart
     .split('\n')
@@ -23,7 +28,8 @@ function serializeProfileBio(bio, links) {
     : [];
   if (cleanLinks.length === 0) return cleanBio;
   const body = cleanLinks.join('\n');
-  return `${cleanBio}${LINKS_MARKER}${body}`.trim();
+  if (!cleanBio) return `---links---\n${body}`;
+  return `${cleanBio}${LINKS_MARKER}${body}`;
 }
 
 /** Resolve @username → primary Solana public key */

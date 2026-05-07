@@ -38,7 +38,10 @@ export default function Dashboard() {
       .catch(console.error);
   }, []);
 
-  const recent = useMemo(() => contacts.filter((c) => c.is_recent), [contacts]);
+  const recent = useMemo(() => {
+    const computed = contacts.filter((c) => c.is_recent).slice(0, 4);
+    return computed;
+  }, [contacts]);
 
   const onSearch = async (e) => {
     e.preventDefault();
@@ -169,7 +172,7 @@ export default function Dashboard() {
                   .toUpperCase()}
               </div>
               <span className="max-w-full truncate text-center text-xs text-slate-300">
-                @{c.contactUser?.username}
+                {c.display_name || c.contactUser?.profile?.full_name || `@${c.contactUser?.username}`}
               </span>
             </Link>
           ))}
