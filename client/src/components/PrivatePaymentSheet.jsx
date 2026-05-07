@@ -1,22 +1,87 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { PublicKey } from '@solana/web3.js';
 import { Shield, Send } from 'lucide-react';
 import { api } from '../lib/api.js';
 import { sendSolTransfer } from '../lib/solTransfer.js';
+import { useAuth } from '../context/AuthContext.jsx';
 
 export default function PrivatePaymentSheet({
   open,
   onClose,
   peerId,
+  peerUsername,
+  peerFullName,
   recipientPubkey,
+  recipientWallets,
   onComplete,
 }) {
   const { connection } = useConnection();
   const wallet = useWallet();
+  const { user } = useAuth();
   const [amount, setAmount] = useState('0.01');
   const [privateMode, setPrivateMode] = useState(false);
+  const [selectedFromWallet, setSelectedFromWallet] = useState('');
+  const [selectedToWallet, setSelectedToWallet] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+
+  const receiverLabel = peerFullName || (peerUsername ? `@${peerUsername}` : 'Receiver');
+  const senderLabel = user?.profile?.full_name || (user?.username ? `@${user.username}` : 'Sender');
+  const receiverInitial = (peerFullName || peerUsername || '?').slice(0, 1).toUpperCase();
+  const connectedAddress = wallet.publicKey?.toBase58() || '';
+  const fromWalletOptions = useMemo(() => {
+    const merged = [];
+    if (connectedAddress) merged.push({ address: connectedAddress, label: 'Connected wallet' });
+    for (const w of user?.wallets || []) {
+      if (!w?.public_address) continue;
+      if (merged.some((item) => item.address === w.public_address)) continue;
+      merged.push({
+        address: w.public_address,
+        label: w.label || (w.is_primary ? 'Primary wallet' : 'Linked wallet'),
+      });
+    }
+    return merged;
+  }, [connectedAddress, user?.wallets]);
+  const toWalletOptions = useMemo(() => {
+    const merged = [];
+    for (const w of recipientWallets || []) {
+      if (!w?.public_address) continue;
+      if (merged.some((item) => item.address === w.public_address)) continue;
+      merged.push({
+        address: w.public_address,
+        label: w.label || (w.is_primary ? 'Primary wallet' : 'Recipient wallet'),
+      });
+    }
+    if (recipientPubkey && !merged.some((item) => item.address === recipientPubkey)) {
+      merged.unshift({ address: recipientPubkey, label: 'Recipient wallet' });
+    }
+    return merged;
+  }, [recipientWallets, recipientPubkey]);
+
+  useEffect(() => {
+    if (!open) return;
+    if (!fromWalletOptions.length) {
+      setSelectedFromWallet('');
+      return;
+    }
+    const defaultAddress = connectedAddress || fromWalletOptions[0].address;
+    if (!selectedFromWallet || !fromWalletOptions.some((item) => item.address === selectedFromWallet)) {
+      setSelectedFromWallet(defaultAddress);
+    }
+  }, [open, fromWalletOptions, connectedAddress, selectedFromWallet]);
+
+  useEffect(() => {
+    if (!open) return;
+    if (!toWalletOptions.length) {
+      setSelectedToWallet('');
+      return;
+    }
+    const defaultAddress = recipientPubkey || toWalletOptions[0].address;
+    if (!selectedToWallet || !toWalletOptions.some((item) => item.address === selectedToWallet)) {
+      setSelectedToWallet(defaultAddress);
+    }
+  }, [open, toWalletOptions, recipientPubkey, selectedToWallet]);
 
   if (!open) return null;
 
@@ -26,7 +91,15 @@ export default function PrivatePaymentSheet({
       setError('Connect a Solana wallet first');
       return;
     }
-    if (!recipientPubkey) {
+    if (!selectedFromWallet) {
+      setError('Choose a sender wallet');
+      return;
+    }
+    if (selectedFromWallet !== connectedAddress) {
+      setError('Connect the selected wallet in your wallet extension to send from it');
+      return;
+    }
+    if (!selectedToWallet) {
       setError('Recipient has no public key on file');
       return;
     }
@@ -50,21 +123,21 @@ export default function PrivatePaymentSheet({
           relayerUrl: cfg.relayerUrl,
           altAddress: cfg.altAddress,
           amountSol: amt,
-          recipientAddress: recipientPubkey,
+          recipientAddress: selectedToWallet,
         });
         txHash = signature;
         isPrivate = true;
       } else {
         txHash = await sendSolTransfer({
           connection,
-          fromPubkey: wallet.publicKey,
+          fromPubkey: new PublicKey(selectedFromWallet),
           sendTransaction: wallet.sendTransaction,
-          toAddress: recipientPubkey,
+          toAddress: selectedToWallet,
           amountSol: amt,
         });
       }
 
-      const summary = await api.balances(wallet.publicKey.toBase58()).catch(() => null);
+      const summary = await api.balances(selectedFromWallet).catch(() => null);
       const solUsd = summary?.sol?.value_usd;
       const usdEstimate = solUsd != null ? (amt / (summary.sol.balance || amt)) * solUsd : null;
 
@@ -104,6 +177,59 @@ export default function PrivatePaymentSheet({
             ✕
           </button>
         </div>
+
+        <div className="mb-4 rounded-2xl border border-white/10 bg-surface px-4 py-3">
+          <p className="text-[11px] font-semibold tracking-wide text-slate-400">PAYING TO</p>
+          <div className="mt-2 flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-accent2/40 to-accent/30 text-sm font-bold text-white">
+              {receiverInitial}
+            </div>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-slate-100">{receiverLabel}</p>
+              {peerUsername && <p className="truncate text-xs text-slate-500">@{peerUsername}</p>}
+            </div>
+          </div>
+          <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
+            <span>From</span>
+            <span className="truncate font-medium text-slate-300">{senderLabel}</span>
+          </div>
+        </div>
+
+        <label className="mb-2 block text-xs text-slate-500">From wallet</label>
+        <select
+          className="mb-4 w-full rounded-2xl border border-white/10 bg-surface px-4 py-3 text-sm outline-none ring-accent focus:ring-1"
+          value={selectedFromWallet}
+          onChange={(e) => setSelectedFromWallet(e.target.value)}
+        >
+          {fromWalletOptions.map((option) => (
+            <option key={option.address} value={option.address}>
+              {option.label} ({option.address.slice(0, 4)}...{option.address.slice(-4)})
+            </option>
+          ))}
+        </select>
+        {selectedFromWallet && (
+          <p className="mb-4 break-all rounded-xl border border-white/10 bg-surface px-3 py-2 text-xs text-slate-400">
+            Sending wallet: {selectedFromWallet}
+          </p>
+        )}
+
+        <label className="mb-2 block text-xs text-slate-500">To wallet</label>
+        <select
+          className="mb-2 w-full rounded-2xl border border-white/10 bg-surface px-4 py-3 text-sm outline-none ring-accent focus:ring-1"
+          value={selectedToWallet}
+          onChange={(e) => setSelectedToWallet(e.target.value)}
+        >
+          {toWalletOptions.map((option) => (
+            <option key={option.address} value={option.address}>
+              {option.label} ({option.address.slice(0, 4)}...{option.address.slice(-4)})
+            </option>
+          ))}
+        </select>
+        {selectedToWallet && (
+          <p className="mb-4 break-all rounded-xl border border-white/10 bg-surface px-3 py-2 text-xs text-slate-400">
+            Receiving wallet: {selectedToWallet}
+          </p>
+        )}
 
         <label className="mb-2 block text-xs text-slate-500">Amount (SOL)</label>
         <input
