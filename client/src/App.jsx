@@ -5,6 +5,7 @@ import Register from './pages/Register.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Transfer from './pages/Transfer.jsx';
 import Profile from './pages/Profile.jsx';
+import Wallet from './pages/Wallet.jsx';
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
@@ -45,6 +46,14 @@ export default function App() {
         element={
           <PrivateRoute>
             <Profile />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/wallet"
+        element={
+          <PrivateRoute>
+            <Wallet />
           </PrivateRoute>
         }
       />

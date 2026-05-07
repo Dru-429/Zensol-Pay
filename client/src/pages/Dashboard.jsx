@@ -71,27 +71,7 @@ export default function Dashboard() {
   };
 
   const checkBalance = async () => {
-    const pk =
-      publicKey?.toBase58() ||
-      user?.wallets?.find((w) => w.is_primary)?.public_address ||
-      user?.wallets?.[0]?.public_address;
-    if (!pk) {
-      setBalanceErr("Connect a wallet or register with a Solana address");
-      setBalanceOpen(true);
-      return;
-    }
-    setBalanceErr("");
-    setBalanceLoading(true);
-    setBalanceOpen(true);
-    try {
-      const data = await api.balances(pk);
-      setBalanceData(data);
-    } catch (e) {
-      setBalanceErr(e.message || "Could not load balances");
-      setBalanceData(null);
-    } finally {
-      setBalanceLoading(false);
-    }
+    navigate('/wallet');
   };
 
   return (
@@ -236,54 +216,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {balanceOpen && (
-        <div className="fixed inset-0 z-40 flex items-end justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md rounded-t-3xl border border-white/10 bg-card p-5">
-            <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Portfolio (Dune Sim)</h3>
-              <button
-                type="button"
-                onClick={() => setBalanceOpen(false)}
-                className="text-slate-500"
-              >
-                ✕
-              </button>
-            </div>
-            {balanceLoading && (
-              <p className="text-sm text-slate-400">Loading…</p>
-            )}
-            {balanceErr && <p className="text-sm text-red-400">{balanceErr}</p>}
-            {balanceData && !balanceLoading && (
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between rounded-2xl bg-surface px-4 py-3">
-                  <span className="text-slate-400">SOL</span>
-                  <span>
-                    {balanceData.sol?.balance?.toFixed?.(4) ??
-                      balanceData.sol?.balance}{" "}
-                    <span className="text-slate-500">
-                      (${balanceData.sol?.value_usd?.toFixed?.(2) ?? "—"})
-                    </span>
-                  </span>
-                </div>
-                <div className="flex justify-between rounded-2xl bg-surface px-4 py-3">
-                  <span className="text-slate-400">USDC</span>
-                  <span>
-                    {balanceData.usdc?.balance?.toFixed?.(2) ??
-                      balanceData.usdc?.balance}{" "}
-                    <span className="text-slate-500">
-                      (${balanceData.usdc?.value_usd?.toFixed?.(2) ?? "—"})
-                    </span>
-                  </span>
-                </div>
-                <p className="text-xs text-slate-500">
-                  Total USD (tokens Dune priced): ~$
-                  {balanceData.total_usd?.toFixed?.(2) ?? "—"}
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+      
 
       {qrOpen && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 p-4">

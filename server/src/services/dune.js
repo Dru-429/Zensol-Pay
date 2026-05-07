@@ -38,11 +38,24 @@ export function summarizePortfolio(balancesResponse) {
   let usdcBalance = 0;
   let usdcUsd = 0;
   let totalUsd = 0;
+  const tokens = [];
 
   for (const b of balances) {
     const symbol = (b.symbol || '').toUpperCase();
     const val = typeof b.value_usd === 'number' ? b.value_usd : 0;
     totalUsd += val;
+    tokens.push({
+      mint: b.address || b.token_address || b.mint || null,
+      symbol: b.symbol || b.token_symbol || 'Token',
+      name: b.name || b.token_name || b.symbol || 'Token',
+      balance: parseFloat(b.balance || b.amount || '0') || 0,
+      value_usd: val,
+      price_usd: typeof b.price_usd === 'number' ? b.price_usd : null,
+      change_24h: typeof b.change_24h === 'number' ? b.change_24h : null,
+      logo_url: b.logo_url || b.logo || b.image || null,
+      verified: Boolean(b.verified),
+      raw: b,
+    });
 
     if (b.address === 'native' || symbol === 'SOL') {
       solBalance = parseFloat(b.balance || '0') || 0;
@@ -59,6 +72,7 @@ export function summarizePortfolio(balancesResponse) {
     sol: { balance: solBalance, value_usd: solUsd },
     usdc: { balance: usdcBalance, value_usd: usdcUsd },
     total_usd: totalUsd,
+    tokens: tokens.sort((a, b) => (b.value_usd || 0) - (a.value_usd || 0)),
     raw: balancesResponse,
   };
 }
