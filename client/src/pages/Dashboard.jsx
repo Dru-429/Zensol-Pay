@@ -23,7 +23,6 @@ export default function Dashboard() {
   const { publicKey, connected } = useWallet();
   const { setVisible } = useWalletModal();
   const [contacts, setContacts] = useState([]);
-  const [query, setQuery] = useState("");
   const [balanceOpen, setBalanceOpen] = useState(false);
   const [balanceData, setBalanceData] = useState(null);
   const [balanceLoading, setBalanceLoading] = useState(false);
@@ -42,17 +41,6 @@ export default function Dashboard() {
     const computed = contacts.filter((c) => c.is_recent).slice(0, 4);
     return computed;
   }, [contacts]);
-
-  const onSearch = async (e) => {
-    e.preventDefault();
-    if (!query.trim()) return;
-    try {
-      const u = await api.resolveUser(query.trim());
-      navigate(`/profile/${u.userId}`);
-    } catch {
-      setBalanceErr("User not found");
-    }
-  };
 
   const openReceiveQr = () => {
     const pk =
@@ -114,15 +102,16 @@ export default function Dashboard() {
             </button>
           </div>
         </div>
-        <form onSubmit={onSearch} className="flex gap-2">
+        <div className="flex gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-            <input
+            <button
+              type="button"
+              onClick={() => navigate("/search")}
               className="w-full rounded-full border border-white/10 bg-card py-2.5 pl-10 pr-4 text-sm outline-none ring-accent focus:ring-1"
-              placeholder="Search @username"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
+            >
+              Search @username, name or pubkey
+            </button>
           </div>
           <button
             type="button"
@@ -137,7 +126,7 @@ export default function Dashboard() {
           >
             <ScanLine className="h-5 w-5 text-slate-400" />
           </button>
-        </form>
+        </div>
         <div className="mt-3 flex gap-2">
           <span className="rounded-full bg-white/5 px-3 py-1 text-xs text-slate-400">
             Trust {user?.profile?.trust_score ?? "—"}

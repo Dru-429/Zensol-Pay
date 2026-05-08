@@ -44,6 +44,7 @@ export const api = {
   logout: () => request('/api/auth/logout', { method: 'POST' }),
   resolveUser: (username) =>
     request(`/api/users/resolve?username=${encodeURIComponent(username)}`),
+  searchUsers: (query) => request(`/api/users/search?q=${encodeURIComponent(query)}`),
   userProfile: (id) => request(`/api/users/${encodeURIComponent(id)}`),
   updateUserProfile: (id, body) =>
     request(`/api/users/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify(body) }),
@@ -54,5 +55,6 @@ export const api = {
   messagesWith: (userId) => request(`/api/messages/with/${userId}`),
   sendMessage: (body) => request('/api/messages', { method: 'POST', body: JSON.stringify(body) }),
   balances: (address) => request(`/api/wallet/balances/${encodeURIComponent(address)}`),
+  walletLookup: (address) => request(`/api/wallet/lookup/${encodeURIComponent(address)}`),
   cloakConfig: () => request('/api/wallet/cloak-config'),
 };

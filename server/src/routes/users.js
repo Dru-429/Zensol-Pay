@@ -32,6 +32,81 @@ function serializeProfileBio(bio, links) {
   return `${cleanBio}${LINKS_MARKER}${body}`;
 }
 
+usersRouter.get('/search', authMiddleware, async (req, res) => {
+  try {
+    const raw = String(req.query.q || req.query.query || '').trim();
+    if (!raw) return res.json({ results: [] });
+    const q = raw.replace(/^@/, '');
+    const ownerId = req.user.sub;
+
+    const contactMatches = await prisma.contact.findMany({
+      where: {
+        owner_id: ownerId,
+        OR: [
+          { display_name: { contains: q, mode: 'insensitive' } },
+          { contactUser: { username: { contains: q, mode: 'insensitive' } } },
+        ],
+      },
+      include: {
+        contactUser: {
+          include: {
+            profile: true,
+            wallets: { where: { is_primary: true }, take: 1 },
+          },
+        },
+      },
+      orderBy: [{ is_recent: 'desc' }, { display_name: 'asc' }],
+      take: 8,
+    });
+
+    const used = new Set();
+    const tier1 = contactMatches.map((row) => {
+      used.add(row.contactUser.id);
+      return {
+        userId: row.contactUser.id,
+        username: row.contactUser.username,
+        full_name: row.contactUser.profile?.full_name || null,
+        display_name: row.display_name || null,
+        public_address: row.contactUser.wallets?.[0]?.public_address || null,
+        source: 'contact',
+      };
+    });
+
+    const globalMatches = await prisma.user.findMany({
+      where: {
+        id: { not: ownerId },
+        OR: [
+          { username: { contains: q, mode: 'insensitive' } },
+          { profile: { full_name: { contains: q, mode: 'insensitive' } } },
+          { wallets: { some: { public_address: { contains: q, mode: 'insensitive' } } } },
+        ],
+      },
+      include: {
+        profile: true,
+        wallets: { where: { is_primary: true }, take: 1 },
+      },
+      orderBy: { username: 'asc' },
+      take: 12,
+    });
+
+    const tier2 = globalMatches
+      .filter((u) => !used.has(u.id))
+      .map((u) => ({
+        userId: u.id,
+        username: u.username,
+        full_name: u.profile?.full_name || null,
+        display_name: null,
+        public_address: u.wallets?.[0]?.public_address || null,
+        source: 'global',
+      }));
+
+    res.json({ results: [...tier1, ...tier2] });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Search failed' });
+  }
+});
+
 /** Resolve @username → primary Solana public key */
 usersRouter.get('/resolve', async (req, res) => {
   try {

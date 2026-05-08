@@ -6,6 +6,8 @@ import Dashboard from './pages/Dashboard.jsx';
 import Transfer from './pages/Transfer.jsx';
 import Profile from './pages/Profile.jsx';
 import Wallet from './pages/Wallet.jsx';
+import SearchPage from './pages/Search.jsx';
+import PubkeyLookupPage from './pages/PubkeyLookup.jsx';
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
@@ -54,6 +56,22 @@ export default function App() {
         element={
           <PrivateRoute>
             <Wallet />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/search"
+        element={
+          <PrivateRoute>
+            <SearchPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/search/pubkey"
+        element={
+          <PrivateRoute>
+            <PubkeyLookupPage />
           </PrivateRoute>
         }
       />
