@@ -2,15 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --color-bg-primary: #0b0f14;
+  --color-bg-secondary: #121a24;
+  --color-bg-secondary-soft: rgba(18, 26, 36, 0.8);
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-border-soft: rgba(255, 255, 255, 0.05);
+  --color-text-secondary: #cbd5e1;
+  --color-text-muted: #94a3b8;
+  --color-text-faint: #64748b;
+}
+
 html,
 body,
 #root {
   min-height: 100%;
 }
 
+
 body {
   background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(153, 69, 255, 0.25), transparent),
-    #0b0f14;
+  #0b0f14;
 }
 
 .scrollbar-hide {
@@ -19,4 +31,40 @@ body {
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+@layer utilities {
+  .bg-primary {
+    background-color: var(--color-bg-primary);
+  }
+  .bg-secondary {
+    background-color: var(--color-bg-secondary);
+  }
+  .bg-secondary-soft {
+    background-color: var(--color-bg-secondary-soft);
+  }
+  .border-theme {
+    border-color: var(--color-border);
+  }
+  .border-theme-soft {
+    border-color: var(--color-border-soft);
+  }
+  .text-secondary {
+    color: var(--color-text-secondary);
+  }
+  .text-muted {
+    color: var(--color-text-muted);
+  }
+  .text-faint {
+    color: var(--color-text-faint);
+  }
+  .ring-theme {
+    --tw-ring-color: theme(colors.accent);
+  }
+  .avatar-gradient {
+    @apply bg-gradient-to-br from-accent2/40 to-accent/30;
+  }
+  .btn-accent {
+    @apply bg-gradient-to-r from-accent to-teal-400 text-surface;
+  }
 }

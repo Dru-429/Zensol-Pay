@@ -122,7 +122,7 @@ export default function Profile() {
   };
 
   if (loading) {
-    return <div className="mx-auto min-h-screen max-w-md px-4 py-8 text-slate-400">Loading profile...</div>;
+    return <div className="mx-auto min-h-screen max-w-md px-4 py-8 text-muted">Loading profile...</div>;
   }
 
   if (!profileUser) {
@@ -132,44 +132,44 @@ export default function Profile() {
   return (
     <div className="mx-auto min-h-screen max-w-md px-4 py-5 pb-24">
       <header className="mb-4 flex items-center gap-3">
-        <Link to="/" className="rounded-full p-2 text-slate-400 hover:bg-white/5">
+        <Link to="/" className="rounded-full p-2 text-muted hover:bg-white/5">
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <h1 className="text-lg font-semibold">Profile</h1>
       </header>
 
-      <section className="rounded-3xl border border-white/10 bg-card/70 p-4">
+      <section className="rounded-3xl border border-theme bg-secondary-soft p-4">
         <div className="flex items-start gap-4">
           <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border border-white/20 text-2xl font-semibold">
             {(profileUser.profile?.full_name || profileUser.username || '?').slice(0, 1).toUpperCase()}
           </div>
           <div className="min-w-0 flex-1">
             <p className="truncate text-xl font-semibold">{profileUser.profile?.full_name || `@${profileUser.username}`}</p>
-            <p className="truncate text-sm text-slate-400">@{profileUser.username}</p>
-            <p className="mt-1 text-xs text-slate-500">Public key: {shortAddress(primaryWallet)}</p>
+            <p className="truncate text-sm text-muted">@{profileUser.username}</p>
+            <p className="mt-1 text-xs text-muted">Public key: {shortAddress(primaryWallet)}</p>
           </div>
         </div>
 
         <div className="mt-4 space-y-2 text-sm">
-          <p className="text-slate-300">{profileUser.profile?.bio || 'No whereabouts added yet.'}</p>
+          <p className="text-secondary">{profileUser.profile?.bio || 'No whereabouts added yet.'}</p>
           {(links.length > 0 || editing) && (
             <div className="space-y-1">
               {editing ? (
                 <>
                   <input
-                    className="w-full rounded-xl border border-white/10 bg-surface px-3 py-2 text-sm outline-none ring-accent focus:ring-1"
+                    className="w-full rounded-xl border border-theme bg-primary px-3 py-2 text-sm text-secondary outline-none ring-theme focus:ring-1"
                     placeholder="Link 1"
                     value={form.link1}
                     onChange={(e) => setForm((prev) => ({ ...prev, link1: e.target.value }))}
                   />
                   <input
-                    className="w-full rounded-xl border border-white/10 bg-surface px-3 py-2 text-sm outline-none ring-accent focus:ring-1"
+                    className="w-full rounded-xl border border-theme bg-primary px-3 py-2 text-sm text-secondary outline-none ring-theme focus:ring-1"
                     placeholder="Link 2"
                     value={form.link2}
                     onChange={(e) => setForm((prev) => ({ ...prev, link2: e.target.value }))}
                   />
                   <input
-                    className="w-full rounded-xl border border-white/10 bg-surface px-3 py-2 text-sm outline-none ring-accent focus:ring-1"
+                    className="w-full rounded-xl border border-theme bg-primary px-3 py-2 text-sm text-secondary outline-none ring-theme focus:ring-1"
                     placeholder="Link 3"
                     value={form.link3}
                     onChange={(e) => setForm((prev) => ({ ...prev, link3: e.target.value }))}
@@ -184,9 +184,9 @@ export default function Profile() {
                       href={url}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex items-center gap-2 text-sm text-slate-200 hover:text-accent"
+                      className="flex items-center gap-2 text-sm text-secondary hover:text-accent"
                     >
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/5 text-xs text-slate-300">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/5 text-xs text-secondary">
                         <Icon className="h-3.5 w-3.5" />
                       </span>
                       <span className="truncate">{label}</span>
@@ -203,13 +203,13 @@ export default function Profile() {
             {editing && (
               <>
                 <input
-                  className="w-full rounded-xl border border-white/10 bg-surface px-3 py-2 text-sm outline-none ring-accent focus:ring-1"
+                  className="w-full rounded-xl border border-theme bg-primary px-3 py-2 text-sm text-secondary outline-none ring-theme focus:ring-1"
                   placeholder="Display name"
                   value={form.full_name}
                   onChange={(e) => setForm((prev) => ({ ...prev, full_name: e.target.value }))}
                 />
                 <textarea
-                  className="min-h-24 w-full rounded-xl border border-white/10 bg-surface px-3 py-2 text-sm outline-none ring-accent focus:ring-1"
+                  className="min-h-24 w-full rounded-xl border border-theme bg-primary px-3 py-2 text-sm text-secondary outline-none ring-theme focus:ring-1"
                   placeholder="Bio..."
                   value={form.bio}
                   onChange={(e) => setForm((prev) => ({ ...prev, bio: e.target.value }))}
@@ -221,7 +221,7 @@ export default function Profile() {
                 <button
                   type="button"
                   onClick={() => setEditing(true)}
-                  className="flex-1 rounded-xl border border-white/10 bg-surface px-3 py-2 text-sm font-medium"
+                  className="flex-1 rounded-xl border border-theme bg-primary px-3 py-2 text-sm font-medium"
                 >
                   <span className="inline-flex items-center gap-2">
                     <Pencil className="h-4 w-4" />
@@ -243,7 +243,7 @@ export default function Profile() {
               )}
               <Link
                 to={`/transfer/${id}`}
-                className="rounded-xl border border-white/10 bg-surface px-3 py-2 text-sm font-medium"
+                className="rounded-xl border border-theme bg-primary px-3 py-2 text-sm font-medium"
               >
                 <span className="inline-flex items-center gap-2">
                   <Send className="h-4 w-4" />
@@ -270,21 +270,21 @@ export default function Profile() {
       {isOwner && (
         <section className="mt-5">
           <div className="mb-2 flex items-center justify-between">
-            <h2 className="text-sm font-medium text-slate-400">Transaction history</h2>
-            <span className="text-xs text-slate-500">Last {history.length}</span>
+            <h2 className="text-sm font-medium text-muted">Transaction history</h2>
+            <span className="text-xs text-muted">Last {history.length}</span>
           </div>
           <div className="space-y-2">
-            {history.length === 0 && <p className="text-sm text-slate-500">No transactions yet.</p>}
+            {history.length === 0 && <p className="text-sm text-muted">No transactions yet.</p>}
             {history.map((tx) => {
               const incoming = tx.receiver_id === user?.id;
               const other = incoming ? tx.sender?.username : tx.receiver?.username;
               return (
-                <div key={tx.id} className="flex items-center justify-between rounded-2xl border border-white/5 bg-card/60 px-3 py-3">
+                <div key={tx.id} className="flex items-center justify-between rounded-2xl border border-theme-soft bg-secondary-soft px-3 py-3">
                   <div>
                     <p className="text-sm font-medium">{incoming ? `From @${other}` : `To @${other}`}</p>
-                    <p className="text-xs text-slate-500">{new Date(tx.createdAt).toLocaleDateString()}</p>
+                    <p className="text-xs text-muted">{new Date(tx.createdAt).toLocaleDateString()}</p>
                   </div>
-                  <p className={`text-sm font-semibold ${incoming ? 'text-emerald-400' : 'text-slate-200'}`}>
+                  <p className={`text-sm font-semibold ${incoming ? 'text-emerald-400' : 'text-secondary'}`}>
                     {incoming ? '+' : '-'}{tx.amount_ui} SOL
                   </p>
                 </div>

@@ -170,34 +170,34 @@ export default function PrivatePaymentSheet({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-t-3xl border border-white/10 bg-card p-5 shadow-2xl">
+      <div className="w-full max-w-md rounded-t-3xl border border-theme bg-secondary p-5 shadow-2xl">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-lg font-semibold">Pay</h3>
-          <button type="button" onClick={onClose} className="text-slate-500">
+          <button type="button" onClick={onClose} className="text-muted">
             ✕
           </button>
         </div>
 
-        <div className="mb-4 rounded-2xl border border-white/10 bg-surface px-4 py-3">
-          <p className="text-[11px] font-semibold tracking-wide text-slate-400">PAYING TO</p>
+        <div className="mb-4 rounded-2xl border border-theme bg-primary px-4 py-3">
+          <p className="text-[11px] font-semibold tracking-wide text-muted">PAYING TO</p>
           <div className="mt-2 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-accent2/40 to-accent/30 text-sm font-bold text-white">
+            <div className="avatar-gradient flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-white">
               {receiverInitial}
             </div>
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-slate-100">{receiverLabel}</p>
-              {peerUsername && <p className="truncate text-xs text-slate-500">@{peerUsername}</p>}
+              <p className="truncate text-sm font-semibold text-secondary">{receiverLabel}</p>
+              {peerUsername && <p className="truncate text-xs text-muted">@{peerUsername}</p>}
             </div>
           </div>
-          <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
+          <div className="mt-3 flex items-center justify-between text-xs text-muted">
             <span>From</span>
-            <span className="truncate font-medium text-slate-300">{senderLabel}</span>
+            <span className="truncate font-medium text-secondary">{senderLabel}</span>
           </div>
         </div>
 
-        <label className="mb-2 block text-xs text-slate-500">From wallet</label>
+        <label className="mb-2 block text-xs text-muted">From wallet</label>
         <select
-          className="mb-4 w-full rounded-2xl border border-white/10 bg-surface px-4 py-3 text-sm outline-none ring-accent focus:ring-1"
+          className="mb-4 w-full rounded-2xl border border-theme bg-primary px-4 py-3 text-sm text-secondary outline-none ring-theme focus:ring-1"
           value={selectedFromWallet}
           onChange={(e) => setSelectedFromWallet(e.target.value)}
         >
@@ -208,14 +208,14 @@ export default function PrivatePaymentSheet({
           ))}
         </select>
         {selectedFromWallet && (
-          <p className="mb-4 break-all rounded-xl border border-white/10 bg-surface px-3 py-2 text-xs text-slate-400">
+          <p className="mb-4 break-all rounded-xl border border-theme bg-primary px-3 py-2 text-xs text-muted">
             Sending wallet: {selectedFromWallet}
           </p>
         )}
 
-        <label className="mb-2 block text-xs text-slate-500">To wallet</label>
+        <label className="mb-2 block text-xs text-muted">To wallet</label>
         <select
-          className="mb-2 w-full rounded-2xl border border-white/10 bg-surface px-4 py-3 text-sm outline-none ring-accent focus:ring-1"
+          className="mb-2 w-full rounded-2xl border border-theme bg-primary px-4 py-3 text-sm text-secondary outline-none ring-theme focus:ring-1"
           value={selectedToWallet}
           onChange={(e) => setSelectedToWallet(e.target.value)}
         >
@@ -226,14 +226,14 @@ export default function PrivatePaymentSheet({
           ))}
         </select>
         {selectedToWallet && (
-          <p className="mb-4 break-all rounded-xl border border-white/10 bg-surface px-3 py-2 text-xs text-slate-400">
+          <p className="mb-4 break-all rounded-xl border border-theme bg-primary px-3 py-2 text-xs text-muted">
             Receiving wallet: {selectedToWallet}
           </p>
         )}
 
-        <label className="mb-2 block text-xs text-slate-500">Amount (SOL)</label>
+        <label className="mb-2 block text-xs text-muted">Amount (SOL)</label>
         <input
-          className="mb-4 w-full rounded-2xl border border-white/10 bg-surface px-4 py-3 text-lg font-medium outline-none ring-accent focus:ring-1"
+          className="mb-4 w-full rounded-2xl border border-theme bg-primary px-4 py-3 text-lg font-medium text-secondary outline-none ring-theme focus:ring-1"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           inputMode="decimal"
@@ -245,7 +245,7 @@ export default function PrivatePaymentSheet({
           className={`mb-4 flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-sm ${
             privateMode
               ? 'border-accent2/50 bg-accent2/10 text-white'
-              : 'border-white/10 bg-surface text-slate-300'
+              : 'border-theme bg-primary text-secondary'
           }`}
         >
           <span className="flex items-center gap-2">
@@ -258,7 +258,7 @@ export default function PrivatePaymentSheet({
             {privateMode ? 'ON' : 'OFF'}
           </span>
         </button>
-        <p className="mb-4 text-xs text-slate-500">
+        <p className="mb-4 text-xs text-muted">
           When ON, funds route through Cloak&apos;s shielded pool so the on-chain link between sender and recipient
           is broken. Requires a working relayer and mainnet-class setup for production.
         </p>

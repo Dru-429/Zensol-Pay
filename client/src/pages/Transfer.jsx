@@ -75,11 +75,11 @@ export default function Transfer() {
   };
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-md flex-col bg-surface">
-      <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-white/5 bg-surface/90 px-3 py-3 backdrop-blur">
+    <div className="bg-primary mx-auto flex min-h-screen max-w-md flex-col">
+      <header className="bg-primary sticky top-0 z-10 flex items-center gap-3 border-b border-theme-soft px-3 py-3 backdrop-blur">
         <Link
           to="/"
-          className="rounded-full p-2 text-slate-400 hover:bg-white/5"
+          className="rounded-full p-2 text-muted hover:bg-white/5"
         >
           <ArrowLeft className="h-5 w-5" />
         </Link>
@@ -87,7 +87,7 @@ export default function Transfer() {
           <p className="truncate font-semibold">
             {peer?.profile?.full_name || `@${peer?.username}`}
           </p>
-          <p className="truncate text-xs text-slate-500">
+          <p className="truncate text-xs text-muted">
             {recipientPk
               ? `${recipientPk.slice(0, 4)}…${recipientPk.slice(-4)}`
               : "No pubkey"}
@@ -118,8 +118,8 @@ export default function Transfer() {
                 <div
                   className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm ${
                     mine
-                      ? "rounded-br-md bg-gradient-to-br from-accent to-teal-400 text-surface"
-                      : "rounded-bl-md bg-card text-white"
+                      ? "rounded-br-md btn-accent"
+                      : "rounded-bl-md bg-secondary text-white"
                   }`}
                 >
                   <p className="font-semibold">
@@ -148,11 +148,11 @@ export default function Transfer() {
             >
               <div
                 className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm ${
-                  mine ? "rounded-br-md bg-white/10" : "rounded-bl-md bg-card"
+                  mine ? "rounded-br-md bg-white/10" : "rounded-bl-md bg-secondary"
                 }`}
               >
                 <p>{msg.text}</p>
-                <p className="mt-1 text-[10px] text-slate-500">
+                <p className="mt-1 text-[10px] text-muted">
                   {formatTime(msg.createdAt)}
                 </p>
               </div>
@@ -161,7 +161,7 @@ export default function Transfer() {
         })}
       </div>
 
-      <footer className="fixed bottom-0 left-0 right-0 border-t border-white/10 bg-surface/95 p-3 backdrop-blur">
+      <footer className="bg-primary fixed bottom-0 left-0 right-0 border-t border-theme p-3 backdrop-blur">
         <div className="mx-auto flex max-w-md gap-2">
           <button
             type="button"
@@ -171,7 +171,7 @@ export default function Transfer() {
             Pay
           </button>
           <input
-            className="flex-1 rounded-full border border-white/10 bg-card px-4 py-3 text-sm outline-none ring-accent focus:ring-1"
+            className="flex-1 rounded-full border border-theme bg-secondary px-4 py-3 text-sm text-secondary outline-none ring-theme focus:ring-1"
             placeholder="Message…"
             value={text}
             onChange={(e) => setText(e.target.value)}

@@ -28,22 +28,22 @@ export default function Login() {
   return (
     <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6">
       <h1 className="mb-2 text-3xl font-bold tracking-tight">SolPay</h1>
-      <p className="mb-8 text-sm text-slate-400">Sign in with your account</p>
+      <p className="mb-8 text-sm text-muted">Sign in with your account</p>
       <form onSubmit={onSubmit} className="space-y-4">
         <div>
-          <label className="mb-1 block text-xs text-slate-500">Email</label>
+          <label className="mb-1 block text-xs text-muted">Email</label>
           <input
-            className="w-full rounded-2xl border border-white/10 bg-card px-4 py-3 text-sm outline-none ring-accent focus:ring-1"
+            className="w-full rounded-2xl border border-theme bg-secondary px-4 py-3 text-sm text-secondary outline-none ring-theme focus:ring-1"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs text-slate-500">Password</label>
+          <label className="mb-1 block text-xs text-muted">Password</label>
           <input
             type="password"
-            className="w-full rounded-2xl border border-white/10 bg-card px-4 py-3 text-sm outline-none ring-accent focus:ring-1"
+            className="w-full rounded-2xl border border-theme bg-secondary px-4 py-3 text-sm text-secondary outline-none ring-theme focus:ring-1"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="current-password"
@@ -57,13 +57,13 @@ export default function Login() {
           Sign in
         </button>
       </form>
-      <p className="mt-6 text-center text-sm text-slate-500">
+      <p className="mt-6 text-center text-sm text-muted">
         No account?{' '}
         <Link to="/register" className="text-accent">
           Register
         </Link>
       </p>
-      <p className="mt-4 text-center text-xs text-slate-600">
+      <p className="mt-4 text-center text-xs text-faint">
         Demo: alice@solpay.demo / demo1234
       </p>
     </div>
