@@ -18,26 +18,31 @@ export default function Transfer() {
   const queryClient = useQueryClient();
   const [text, setText] = useState("");
   const [sheet, setSheet] = useState(false);
+  const isSelf = id === "self";
+  const peerId = isSelf ? user?.id : id;
 
   const {
     data: peer,
     error: peerErr,
   } = useQuery({
-    queryKey: ["userProfile", id],
-    queryFn: () => api.userProfile(id),
+    queryKey: ["userProfile", peerId],
+    queryFn: () => api.userProfile(peerId),
+    enabled: Boolean(peerId),
   });
 
   const { data: transfersData } = useQuery({
-    queryKey: ["transfersWith", id],
-    queryFn: () => api.transfersWith(id),
+    queryKey: ["transfersWith", peerId],
+    queryFn: () => api.transfersWith(peerId),
     staleTime: 8_000,
+    enabled: Boolean(peerId),
   });
   const transfers = transfersData?.transfers || [];
 
   const { data: messagesData } = useQuery({
-    queryKey: ["messagesWith", id],
-    queryFn: () => api.messagesWith(id),
+    queryKey: ["messagesWith", peerId],
+    queryFn: () => api.messagesWith(peerId),
     staleTime: 8_000,
+    enabled: Boolean(peerId),
   });
   const messages = messagesData?.messages || [];
 
@@ -75,10 +80,10 @@ export default function Transfer() {
   };
 
   const sendMessageMutation = useMutation({
-    mutationFn: (bodyText) => api.sendMessage({ receiver_id: id, text: bodyText }),
+    mutationFn: (bodyText) => api.sendMessage({ receiver_id: peerId, text: bodyText }),
     onSuccess: () => {
       setText("");
-      queryClient.invalidateQueries({ queryKey: ["messagesWith", id] });
+      queryClient.invalidateQueries({ queryKey: ["messagesWith", peerId] });
       queryClient.invalidateQueries({ queryKey: ["contacts"] });
     },
   });
@@ -94,12 +99,14 @@ export default function Transfer() {
         </Link>
         <div className="min-w-0 flex-1">
           <p className="truncate font-semibold">
-            {peer?.profile?.full_name || `@${peer?.username}`}
+            {isSelf ? "Self transfer" : peer?.profile?.full_name || `@${peer?.username}`}
           </p>
           <p className="truncate text-xs text-muted">
-            {recipientPk
-              ? `${recipientPk.slice(0, 4)}…${recipientPk.slice(-4)}`
-              : "No pubkey"}
+            {isSelf
+              ? "Move funds between your wallets"
+              : recipientPk
+                ? `${recipientPk.slice(0, 4)}…${recipientPk.slice(-4)}`
+                : "No pubkey"}
           </p>
         </div>
         <button
@@ -199,14 +206,14 @@ export default function Transfer() {
       <PrivatePaymentSheet
         open={sheet}
         onClose={() => setSheet(false)}
-        peerId={id}
-        peerUsername={peer?.username}
-        peerFullName={peer?.profile?.full_name}
+        peerId={peerId}
+        peerUsername={isSelf ? user?.username : peer?.username}
+        peerFullName={isSelf ? user?.profile?.full_name : peer?.profile?.full_name}
         recipientPubkey={recipientPk}
         recipientWallets={peer?.wallets || []}
         onComplete={() => {
-          queryClient.invalidateQueries({ queryKey: ["transfersWith", id] });
-          queryClient.invalidateQueries({ queryKey: ["messagesWith", id] });
+          queryClient.invalidateQueries({ queryKey: ["transfersWith", peerId] });
+          queryClient.invalidateQueries({ queryKey: ["messagesWith", peerId] });
           queryClient.invalidateQueries({ queryKey: ["contacts"] });
         }}
       />

@@ -57,39 +57,41 @@ messagesRouter.post('/', async (req, res) => {
         related_transfer_id: related_transfer_id || null,
       },
     });
-    await prisma.contact.upsert({
-      where: {
-        owner_id_contact_user_id: { owner_id: sender.id, contact_user_id: receiver.id },
-      },
-      create: {
-        owner_id: sender.id,
-        contact_user_id: receiver.id,
-        display_name: receiver.username,
-        is_recent: true,
-      },
-      update: {
-        is_recent: true,
-      },
-    });
-    await prisma.contact.upsert({
-      where: {
-        owner_id_contact_user_id: { owner_id: receiver.id, contact_user_id: sender.id },
-      },
-      create: {
-        owner_id: receiver.id,
-        contact_user_id: sender.id,
-        display_name: sender.username,
-        is_recent: true,
-      },
-      update: {
-        is_recent: true,
-      },
-    });
+    if (sender.id !== receiver.id) {
+      await prisma.contact.upsert({
+        where: {
+          owner_id_contact_user_id: { owner_id: sender.id, contact_user_id: receiver.id },
+        },
+        create: {
+          owner_id: sender.id,
+          contact_user_id: receiver.id,
+          display_name: receiver.username,
+          is_recent: true,
+        },
+        update: {
+          is_recent: true,
+        },
+      });
+      await prisma.contact.upsert({
+        where: {
+          owner_id_contact_user_id: { owner_id: receiver.id, contact_user_id: sender.id },
+        },
+        create: {
+          owner_id: receiver.id,
+          contact_user_id: sender.id,
+          display_name: sender.username,
+          is_recent: true,
+        },
+        update: {
+          is_recent: true,
+        },
+      });
+    }
     delKeys([
       `messages:with:${sender.id}:${receiver.id}`,
       `messages:with:${receiver.id}:${sender.id}`,
-      `contacts:list:${sender.id}`,
-      `contacts:list:${receiver.id}`,
+      sender.id !== receiver.id ? `contacts:list:${sender.id}` : null,
+      sender.id !== receiver.id ? `contacts:list:${receiver.id}` : null,
     ]);
     res.json(msg);
   } catch (e) {

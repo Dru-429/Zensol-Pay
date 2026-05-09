@@ -103,6 +103,10 @@ export default function PrivatePaymentSheet({
       setError('Recipient has no public key on file');
       return;
     }
+    if (selectedFromWallet === selectedToWallet) {
+      setError('Choose two different wallets for transfer');
+      return;
+    }
     setBusy(true);
     try {
       const amt = parseFloat(amount);
