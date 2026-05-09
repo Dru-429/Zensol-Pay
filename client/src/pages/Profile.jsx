@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Pencil, Save, Send } from 'lucide-react';
 import { FiLink, FiTwitter, FiLinkedin } from 'react-icons/fi';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../context/AuthContext.jsx';
 import { api } from '../lib/api.js';
 
@@ -40,11 +41,8 @@ export default function Profile() {
   const { id } = useParams();
   const { user } = useAuth();
   const isOwner = user?.id === id;
-  const [profileUser, setProfileUser] = useState(null);
-  const [history, setHistory] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [editing, setEditing] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [form, setForm] = useState({
     full_name: '',
@@ -54,35 +52,38 @@ export default function Profile() {
     link3: '',
   });
 
+  const {
+    data: profileUser,
+    isLoading: loading,
+    error: profileErr,
+  } = useQuery({
+    queryKey: ['userProfile', id],
+    queryFn: () => api.userProfile(id),
+  });
+
+  const { data: historyData } = useQuery({
+    queryKey: ['myTransfers'],
+    queryFn: api.myTransfers,
+    enabled: Boolean(isOwner),
+    staleTime: 10_000,
+  });
+  const history = historyData?.transfers || [];
+
   useEffect(() => {
-    const load = async () => {
-      setLoading(true);
-      setError('');
-      try {
-        const data = await api.userProfile(id);
-        setProfileUser(data);
-        const links = data?.profile?.links || [];
-        setForm({
-          full_name: data?.profile?.full_name || '',
-          bio: data?.profile?.bio || '',
-          link1: links[0] || '',
-          link2: links[1] || '',
-          link3: links[2] || '',
-        });
-        if (user?.id === id) {
-          const own = await api.myTransfers();
-          setHistory(own.transfers || []);
-        } else {
-          setHistory([]);
-        }
-      } catch (e) {
-        setError(e.message || 'Failed to load profile');
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, [id, user?.id]);
+    if (!profileUser) return;
+    const links = profileUser?.profile?.links || [];
+    setForm({
+      full_name: profileUser?.profile?.full_name || '',
+      bio: profileUser?.profile?.bio || '',
+      link1: links[0] || '',
+      link2: links[1] || '',
+      link3: links[2] || '',
+    });
+  }, [profileUser]);
+
+  useEffect(() => {
+    if (profileErr) setError(profileErr.message || 'Failed to load profile');
+  }, [profileErr]);
 
   const primaryWallet = useMemo(
     () =>
@@ -96,29 +97,24 @@ export default function Profile() {
     return profileUser.profile.links.filter(Boolean).slice(0, 3);
   }, [profileUser]);
 
-  const onSave = async () => {
-    setSaving(true);
-    setError('');
-    try {
-      const payload = {
-        full_name: form.full_name.trim(),
-        bio: form.bio.trim(),
-        links: [form.link1, form.link2, form.link3].map((item) => item.trim()).filter(Boolean),
-      };
-      const updated = await api.updateUserProfile(id, payload);
-      setProfileUser((prev) => ({
-        ...prev,
-        profile: {
-          ...prev?.profile,
-          ...updated.profile,
-        },
-      }));
+  const saveMutation = useMutation({
+    mutationFn: (payload) => api.updateUserProfile(id, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['userProfile', id] });
+      queryClient.invalidateQueries({ queryKey: ['contacts'] });
       setEditing(false);
-    } catch (e) {
-      setError(e.message || 'Failed to save profile');
-    } finally {
-      setSaving(false);
-    }
+    },
+    onError: (e) => setError(e.message || 'Failed to save profile'),
+  });
+
+  const onSave = async () => {
+    setError('');
+    const payload = {
+      full_name: form.full_name.trim(),
+      bio: form.bio.trim(),
+      links: [form.link1, form.link2, form.link3].map((item) => item.trim()).filter(Boolean),
+    };
+    saveMutation.mutate(payload);
   };
 
   if (loading) {
@@ -232,12 +228,12 @@ export default function Profile() {
                 <button
                   type="button"
                   onClick={onSave}
-                  disabled={saving}
-                  className="flex-1 rounded-xl bg-gradient-to-r from-accent2 to-violet-500 px-3 py-2 text-sm font-semibold text-white disabled:opacity-60"
+                  disabled={saveMutation.isPending}
+                  className="btn-accent flex-1 rounded-xl px-3 py-2 text-sm font-semibold disabled:opacity-60"
                 >
                   <span className="inline-flex items-center gap-2">
                     <Save className="h-4 w-4" />
-                    {saving ? 'Saving...' : 'Save profile'}
+                    {saveMutation.isPending ? 'Saving...' : 'Save profile'}
                   </span>
                 </button>
               )}

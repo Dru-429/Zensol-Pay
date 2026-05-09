@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { prisma } from '../lib/prisma.js';
 import { authMiddleware } from '../middleware/auth.js';
+import { delKeys, getOrSet } from '../lib/cache.js';
 
 export const usersRouter = Router();
 const LINKS_MARKER = '\n\n---links---\n';
@@ -38,69 +39,74 @@ usersRouter.get('/search', authMiddleware, async (req, res) => {
     if (!raw) return res.json({ results: [] });
     const q = raw.replace(/^@/, '');
     const ownerId = req.user.sub;
+    const cacheKey = `users:search:${ownerId}:${q.toLowerCase()}`;
 
-    const contactMatches = await prisma.contact.findMany({
-      where: {
-        owner_id: ownerId,
-        OR: [
-          { display_name: { contains: q, mode: 'insensitive' } },
-          { contactUser: { username: { contains: q, mode: 'insensitive' } } },
-        ],
-      },
-      include: {
-        contactUser: {
-          include: {
-            profile: true,
-            wallets: { where: { is_primary: true }, take: 1 },
+    const results = await getOrSet(cacheKey, 12, async () => {
+      const contactMatches = await prisma.contact.findMany({
+        where: {
+          owner_id: ownerId,
+          OR: [
+            { display_name: { contains: q, mode: 'insensitive' } },
+            { contactUser: { username: { contains: q, mode: 'insensitive' } } },
+          ],
+        },
+        include: {
+          contactUser: {
+            include: {
+              profile: true,
+              wallets: { where: { is_primary: true }, take: 1 },
+            },
           },
         },
-      },
-      orderBy: [{ is_recent: 'desc' }, { display_name: 'asc' }],
-      take: 8,
+        orderBy: [{ is_recent: 'desc' }, { display_name: 'asc' }],
+        take: 8,
+      });
+
+      const used = new Set();
+      const tier1 = contactMatches.map((row) => {
+        used.add(row.contactUser.id);
+        return {
+          userId: row.contactUser.id,
+          username: row.contactUser.username,
+          full_name: row.contactUser.profile?.full_name || null,
+          display_name: row.display_name || null,
+          public_address: row.contactUser.wallets?.[0]?.public_address || null,
+          source: 'contact',
+        };
+      });
+
+      const globalMatches = await prisma.user.findMany({
+        where: {
+          id: { not: ownerId },
+          OR: [
+            { username: { contains: q, mode: 'insensitive' } },
+            { profile: { full_name: { contains: q, mode: 'insensitive' } } },
+            { wallets: { some: { public_address: { contains: q, mode: 'insensitive' } } } },
+          ],
+        },
+        include: {
+          profile: true,
+          wallets: { where: { is_primary: true }, take: 1 },
+        },
+        orderBy: { username: 'asc' },
+        take: 12,
+      });
+
+      const tier2 = globalMatches
+        .filter((u) => !used.has(u.id))
+        .map((u) => ({
+          userId: u.id,
+          username: u.username,
+          full_name: u.profile?.full_name || null,
+          display_name: null,
+          public_address: u.wallets?.[0]?.public_address || null,
+          source: 'global',
+        }));
+
+      return [...tier1, ...tier2];
     });
 
-    const used = new Set();
-    const tier1 = contactMatches.map((row) => {
-      used.add(row.contactUser.id);
-      return {
-        userId: row.contactUser.id,
-        username: row.contactUser.username,
-        full_name: row.contactUser.profile?.full_name || null,
-        display_name: row.display_name || null,
-        public_address: row.contactUser.wallets?.[0]?.public_address || null,
-        source: 'contact',
-      };
-    });
-
-    const globalMatches = await prisma.user.findMany({
-      where: {
-        id: { not: ownerId },
-        OR: [
-          { username: { contains: q, mode: 'insensitive' } },
-          { profile: { full_name: { contains: q, mode: 'insensitive' } } },
-          { wallets: { some: { public_address: { contains: q, mode: 'insensitive' } } } },
-        ],
-      },
-      include: {
-        profile: true,
-        wallets: { where: { is_primary: true }, take: 1 },
-      },
-      orderBy: { username: 'asc' },
-      take: 12,
-    });
-
-    const tier2 = globalMatches
-      .filter((u) => !used.has(u.id))
-      .map((u) => ({
-        userId: u.id,
-        username: u.username,
-        full_name: u.profile?.full_name || null,
-        display_name: null,
-        public_address: u.wallets?.[0]?.public_address || null,
-        source: 'global',
-      }));
-
-    res.json({ results: [...tier1, ...tier2] });
+    res.json({ results });
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: 'Search failed' });
@@ -113,13 +119,16 @@ usersRouter.get('/resolve', async (req, res) => {
     let q = req.query.username || req.query.q;
     if (!q) return res.status(400).json({ error: 'username required' });
     q = String(q).replace(/^@/, '').toLowerCase();
-    const user = await prisma.user.findUnique({
-      where: { username: q },
-      include: {
-        wallets: { where: { is_primary: true }, take: 1 },
-        profile: true,
-      },
-    });
+    const key = `users:resolve:${q}`;
+    const user = await getOrSet(key, 60, () =>
+      prisma.user.findUnique({
+        where: { username: q },
+        include: {
+          wallets: { where: { is_primary: true }, take: 1 },
+          profile: true,
+        },
+      })
+    );
     if (!user) return res.status(404).json({ error: 'User not found' });
     const primary = user.wallets[0] || (await prisma.walletAccount.findFirst({ where: { userId: user.id } }));
     if (!primary) return res.status(404).json({ error: 'No wallet on file' });
@@ -138,14 +147,17 @@ usersRouter.get('/resolve', async (req, res) => {
 
 usersRouter.get('/:id', authMiddleware, async (req, res) => {
   try {
-    const user = await prisma.user.findUnique({
-      where: { id: req.params.id },
-      include: {
-        profile: true,
-        wallets: true,
-        receivedTransfers: { take: 10, orderBy: { createdAt: 'desc' } },
-      },
-    });
+    const key = `users:profile:${req.params.id}`;
+    const user = await getOrSet(key, 20, () =>
+      prisma.user.findUnique({
+        where: { id: req.params.id },
+        include: {
+          profile: true,
+          wallets: true,
+          receivedTransfers: { take: 10, orderBy: { createdAt: 'desc' } },
+        },
+      })
+    );
     if (!user) return res.status(404).json({ error: 'Not found' });
     const parsed = parseProfileBio(user.profile?.bio);
     res.json({
@@ -184,6 +196,7 @@ usersRouter.put('/:id', authMiddleware, async (req, res) => {
       },
     });
     const parsed = parseProfileBio(profile.bio);
+    delKeys([`users:profile:${req.params.id}`]);
     res.json({
       profile: {
         ...profile,

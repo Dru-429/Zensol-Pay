@@ -6,6 +6,7 @@ import { PublicKey } from '@solana/web3.js';
 import BigNumber from 'bignumber.js';
 import { QRCodeSVG } from 'qrcode.react';
 import { ArrowLeft, QrCode, Send, Wallet as WalletIcon, DollarSign } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../context/AuthContext.jsx';
 import { api } from '../lib/api.js';
 
@@ -47,9 +48,6 @@ export default function Wallet() {
   }, [publicKey, user?.wallets]);
 
   const [selected, setSelected] = useState(accounts[0]?.address || '');
-  const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState('');
-  const [data, setData] = useState(null);
   const [qrOpen, setQrOpen] = useState(false);
   const [payUrl, setPayUrl] = useState('');
 
@@ -57,28 +55,20 @@ export default function Wallet() {
     if (!selected && accounts[0]?.address) setSelected(accounts[0].address);
   }, [accounts, selected]);
 
-  useEffect(() => {
-    const load = async () => {
-      if (!selected) {
-        setLoading(false);
-        setErr('No wallet address found. Connect wallet or add one during registration.');
-        setData(null);
-        return;
-      }
-      setLoading(true);
-      setErr('');
-      try {
-        const d = await api.balances(selected);
-        setData(d);
-      } catch (e) {
-        setErr(e.message || 'Could not load balances');
-        setData(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, [selected]);
+  const {
+    data,
+    isLoading: loading,
+    error: errObj,
+  } = useQuery({
+    queryKey: ['balances', selected],
+    queryFn: () => api.balances(selected),
+    enabled: Boolean(selected),
+    staleTime: 30_000,
+    keepPreviousData: true,
+  });
+  const err = !selected
+    ? 'No wallet address found. Connect wallet or add one during registration.'
+    : errObj?.message || '';
 
   const openReceiveQr = () => {
     if (!selected) return;
@@ -208,7 +198,7 @@ export default function Wallet() {
               <p className="text-sm font-semibold">${money(t.value_usd)}</p>
             </div>
           ))}
-          {!loading && !err && tokens.length === 0 && (
+      {!loading && !err && tokens.length === 0 && (
             <p className="text-sm text-muted">No tokens found.</p>
           )}
         </div>

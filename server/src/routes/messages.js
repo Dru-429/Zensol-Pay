@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { prisma } from '../lib/prisma.js';
 import { authMiddleware } from '../middleware/auth.js';
+import { delKeys, getOrSet } from '../lib/cache.js';
 
 export const messagesRouter = Router();
 messagesRouter.use(authMiddleware);
@@ -9,16 +10,19 @@ messagesRouter.get('/with/:userId', async (req, res) => {
   try {
     const other = req.params.userId;
     const me = req.user.sub;
-    const messages = await prisma.message.findMany({
-      where: {
-        OR: [
-          { sender_id: me, receiver_id: other },
-          { sender_id: other, receiver_id: me },
-        ],
-      },
-      orderBy: { createdAt: 'asc' },
-      include: { transfer: true },
-    });
+    const key = `messages:with:${me}:${other}`;
+    const messages = await getOrSet(key, 8, () =>
+      prisma.message.findMany({
+        where: {
+          OR: [
+            { sender_id: me, receiver_id: other },
+            { sender_id: other, receiver_id: me },
+          ],
+        },
+        orderBy: { createdAt: 'asc' },
+        include: { transfer: true },
+      })
+    );
     res.json({ messages });
   } catch (e) {
     console.error(e);
@@ -81,6 +85,12 @@ messagesRouter.post('/', async (req, res) => {
         is_recent: true,
       },
     });
+    delKeys([
+      `messages:with:${sender.id}:${receiver.id}`,
+      `messages:with:${receiver.id}:${sender.id}`,
+      `contacts:list:${sender.id}`,
+      `contacts:list:${receiver.id}`,
+    ]);
     res.json(msg);
   } catch (e) {
     console.error(e);

@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Send } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../context/AuthContext.jsx";
 import { api } from "../lib/api.js";
 import PrivatePaymentSheet from "../components/PrivatePaymentSheet.jsx";
@@ -14,32 +15,33 @@ function formatTime(iso) {
 export default function Transfer() {
   const { id } = useParams();
   const { user } = useAuth();
-  const [peer, setPeer] = useState(null);
-  const [transfers, setTransfers] = useState([]);
-  const [messages, setMessages] = useState([]);
+  const queryClient = useQueryClient();
   const [text, setText] = useState("");
   const [sheet, setSheet] = useState(false);
-  const [loadErr, setLoadErr] = useState("");
 
-  const load = async () => {
-    setLoadErr("");
-    try {
-      const [prof, t, m] = await Promise.all([
-        api.userProfile(id),
-        api.transfersWith(id),
-        api.messagesWith(id),
-      ]);
-      setPeer(prof);
-      setTransfers(t.transfers || []);
-      setMessages(m.messages || []);
-    } catch (e) {
-      setLoadErr(e.message || "Failed to load chat");
-    }
-  };
+  const {
+    data: peer,
+    error: peerErr,
+  } = useQuery({
+    queryKey: ["userProfile", id],
+    queryFn: () => api.userProfile(id),
+  });
 
-  useEffect(() => {
-    load();
-  }, [id]);
+  const { data: transfersData } = useQuery({
+    queryKey: ["transfersWith", id],
+    queryFn: () => api.transfersWith(id),
+    staleTime: 8_000,
+  });
+  const transfers = transfersData?.transfers || [];
+
+  const { data: messagesData } = useQuery({
+    queryKey: ["messagesWith", id],
+    queryFn: () => api.messagesWith(id),
+    staleTime: 8_000,
+  });
+  const messages = messagesData?.messages || [];
+
+  const loadErr = peerErr?.message || "";
 
   const timeline = useMemo(() => {
     const items = [];
@@ -69,10 +71,17 @@ export default function Transfer() {
 
   const sendChat = async () => {
     if (!text.trim()) return;
-    await api.sendMessage({ receiver_id: id, text: text.trim() });
-    setText("");
-    load();
+    sendMessageMutation.mutate(text.trim());
   };
+
+  const sendMessageMutation = useMutation({
+    mutationFn: (bodyText) => api.sendMessage({ receiver_id: id, text: bodyText }),
+    onSuccess: () => {
+      setText("");
+      queryClient.invalidateQueries({ queryKey: ["messagesWith", id] });
+      queryClient.invalidateQueries({ queryKey: ["contacts"] });
+    },
+  });
 
   return (
     <div className="bg-primary mx-auto flex min-h-screen max-w-md flex-col">
@@ -195,7 +204,11 @@ export default function Transfer() {
         peerFullName={peer?.profile?.full_name}
         recipientPubkey={recipientPk}
         recipientWallets={peer?.wallets || []}
-        onComplete={load}
+        onComplete={() => {
+          queryClient.invalidateQueries({ queryKey: ["transfersWith", id] });
+          queryClient.invalidateQueries({ queryKey: ["messagesWith", id] });
+          queryClient.invalidateQueries({ queryKey: ["contacts"] });
+        }}
       />
     </div>
   );

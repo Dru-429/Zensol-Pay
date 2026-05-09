@@ -1,19 +1,24 @@
 import { Router } from 'express';
 import { prisma } from '../lib/prisma.js';
 import { authMiddleware } from '../middleware/auth.js';
+import { delKeys, getOrSet } from '../lib/cache.js';
 
 export const contactsRouter = Router();
 contactsRouter.use(authMiddleware);
 
 contactsRouter.get('/', async (req, res) => {
   try {
-    const list = await prisma.contact.findMany({
-      where: { owner_id: req.user.sub },
-      include: {
-        contactUser: { include: { profile: true, wallets: { where: { is_primary: true }, take: 1 } } },
-      },
-      orderBy: [{ is_recent: 'desc' }, { display_name: 'asc' }],
-    });
+    const ownerId = req.user.sub;
+    const key = `contacts:list:${ownerId}`;
+    const list = await getOrSet(key, 10, () =>
+      prisma.contact.findMany({
+        where: { owner_id: ownerId },
+        include: {
+          contactUser: { include: { profile: true, wallets: { where: { is_primary: true }, take: 1 } } },
+        },
+        orderBy: [{ is_recent: 'desc' }, { display_name: 'asc' }],
+      })
+    );
     res.json({ contacts: list });
   } catch (e) {
     console.error(e);
@@ -45,6 +50,7 @@ contactsRouter.post('/', async (req, res) => {
       },
       include: { contactUser: { include: { profile: true } } },
     });
+    delKeys([`contacts:list:${req.user.sub}`]);
     res.json(row);
   } catch (e) {
     console.error(e);

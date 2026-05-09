@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ArrowLeft, Loader2, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { api } from '../lib/api.js';
 
 function num(value, digits = 4) {
@@ -11,26 +12,26 @@ function num(value, digits = 4) {
 export default function PubkeyLookupPage() {
   const navigate = useNavigate();
   const [address, setAddress] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [data, setData] = useState(null);
+  const [submitted, setSubmitted] = useState('');
 
   const run = async (e) => {
     e.preventDefault();
     const value = address.trim();
     if (!value) return;
-    setLoading(true);
-    setError('');
-    try {
-      const res = await api.walletLookup(value);
-      setData(res);
-    } catch (ex) {
-      setData(null);
-      setError(ex.message || 'Failed to fetch public key data');
-    } finally {
-      setLoading(false);
-    }
+    setSubmitted(value);
   };
+
+  const {
+    data,
+    isFetching: loading,
+    error: errObj,
+  } = useQuery({
+    queryKey: ['walletLookup', submitted],
+    queryFn: () => api.walletLookup(submitted),
+    enabled: Boolean(submitted),
+    staleTime: 60_000,
+  });
+  const error = errObj?.message || '';
 
   return (
     <div className="bg-primary mx-auto min-h-screen max-w-md px-4 pb-6 pt-4">

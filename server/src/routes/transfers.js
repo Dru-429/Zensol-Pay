@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { prisma } from '../lib/prisma.js';
 import { authMiddleware } from '../middleware/auth.js';
+import { delKeys, getOrSet } from '../lib/cache.js';
 
 export const transfersRouter = Router();
 transfersRouter.use(authMiddleware);
@@ -33,6 +34,14 @@ transfersRouter.post('/', async (req, res) => {
       where: { owner_id: receiver_id, contact_user_id: req.user.sub },
       data: { is_recent: true },
     });
+    delKeys([
+      `transfers:mine:${req.user.sub}`,
+      `transfers:mine:${receiver_id}`,
+      `transfers:with:${req.user.sub}:${receiver_id}`,
+      `transfers:with:${receiver_id}:${req.user.sub}`,
+      `contacts:list:${req.user.sub}`,
+      `contacts:list:${receiver_id}`,
+    ]);
     res.json(transfer);
   } catch (e) {
     console.error(e);
@@ -44,15 +53,18 @@ transfersRouter.get('/with/:userId', async (req, res) => {
   try {
     const other = req.params.userId;
     const me = req.user.sub;
-    const transfers = await prisma.transfer.findMany({
-      where: {
-        OR: [
-          { sender_id: me, receiver_id: other },
-          { sender_id: other, receiver_id: me },
-        ],
-      },
-      orderBy: { createdAt: 'asc' },
-    });
+    const key = `transfers:with:${me}:${other}`;
+    const transfers = await getOrSet(key, 8, () =>
+      prisma.transfer.findMany({
+        where: {
+          OR: [
+            { sender_id: me, receiver_id: other },
+            { sender_id: other, receiver_id: me },
+          ],
+        },
+        orderBy: { createdAt: 'asc' },
+      })
+    );
     res.json({ transfers });
   } catch (e) {
     console.error(e);
@@ -63,17 +75,20 @@ transfersRouter.get('/with/:userId', async (req, res) => {
 transfersRouter.get('/mine', async (req, res) => {
   try {
     const me = req.user.sub;
-    const transfers = await prisma.transfer.findMany({
-      where: {
-        OR: [{ sender_id: me }, { receiver_id: me }],
-      },
-      orderBy: { createdAt: 'desc' },
-      take: 30,
-      include: {
-        sender: { select: { id: true, username: true } },
-        receiver: { select: { id: true, username: true } },
-      },
-    });
+    const key = `transfers:mine:${me}`;
+    const transfers = await getOrSet(key, 12, () =>
+      prisma.transfer.findMany({
+        where: {
+          OR: [{ sender_id: me }, { receiver_id: me }],
+        },
+        orderBy: { createdAt: 'desc' },
+        take: 30,
+        include: {
+          sender: { select: { id: true, username: true } },
+          receiver: { select: { id: true, username: true } },
+        },
+      })
+    );
     res.json({ transfers });
   } catch (e) {
     console.error(e);

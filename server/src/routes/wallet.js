@@ -4,6 +4,7 @@ import { fetchSvmBalances, summarizePortfolio } from '../services/dune.js';
 import { authMiddleware } from '../middleware/auth.js';
 import { getCloakConfig, probeCloakRelayer } from '../services/cloak.js';
 import { fetchHeliusAddressProfile } from '../services/helius.js';
+import { getOrSet } from '../lib/cache.js';
 
 export const walletRouter = Router();
 
@@ -15,8 +16,11 @@ walletRouter.get('/balances/:address', authMiddleware, async (req, res) => {
     } catch {
       return res.status(400).json({ error: 'Invalid Solana address' });
     }
-    const data = await fetchSvmBalances(addr);
-    const summary = summarizePortfolio(data);
+    const key = `wallet:balances:${addr}`;
+    const summary = await getOrSet(key, 45, async () => {
+      const data = await fetchSvmBalances(addr);
+      return summarizePortfolio(data);
+    });
     res.json(summary);
   } catch (e) {
     console.error(e);
@@ -50,8 +54,8 @@ walletRouter.get('/lookup/:address', authMiddleware, async (req, res) => {
     }
 
     const [portfolioRaw, heliusProfile] = await Promise.all([
-      fetchSvmBalances(address).catch(() => null),
-      fetchHeliusAddressProfile(address),
+      getOrSet(`wallet:balancesRaw:${address}`, 60, () => fetchSvmBalances(address)).catch(() => null),
+      getOrSet(`wallet:helius:${address}`, 60, () => fetchHeliusAddressProfile(address)),
     ]);
 
     const portfolio = portfolioRaw ? summarizePortfolio(portfolioRaw) : null;

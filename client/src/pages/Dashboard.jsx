@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
@@ -6,6 +6,7 @@ import { encodeURL } from "@solana/pay";
 import { PublicKey } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
 import { QRCodeSVG } from "qrcode.react";
+import { useQuery } from "@tanstack/react-query";
 import {
   Search,
   QrCode,
@@ -22,7 +23,6 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const { publicKey, connected } = useWallet();
   const { setVisible } = useWalletModal();
-  const [contacts, setContacts] = useState([]);
   const [balanceOpen, setBalanceOpen] = useState(false);
   const [balanceData, setBalanceData] = useState(null);
   const [balanceLoading, setBalanceLoading] = useState(false);
@@ -30,12 +30,11 @@ export default function Dashboard() {
   const [qrOpen, setQrOpen] = useState(false);
   const [payUrl, setPayUrl] = useState("");
 
-  useEffect(() => {
-    api
-      .contacts()
-      .then((d) => setContacts(d.contacts || []))
-      .catch(console.error);
-  }, []);
+  const { data: contactsData } = useQuery({
+    queryKey: ["contacts"],
+    queryFn: api.contacts,
+  });
+  const contacts = contactsData?.contacts || [];
 
   const recent = useMemo(() => {
     const computed = contacts.filter((c) => c.is_recent).slice(0, 4);

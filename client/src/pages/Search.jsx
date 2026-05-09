@@ -1,35 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ArrowLeft, Loader2, Search } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { api } from '../lib/api.js';
 import SearchResultsList from '../components/SearchResultsList.jsx';
 
 export default function SearchPage() {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState([]);
-
-  useEffect(() => {
-    const q = query.trim();
-    if (!q) {
-      setResults([]);
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    const timer = setTimeout(async () => {
-      try {
-        const data = await api.searchUsers(q);
-        setResults(data.results || []);
-      } catch {
-        setResults([]);
-      } finally {
-        setLoading(false);
-      }
-    }, 280);
-    return () => clearTimeout(timer);
-  }, [query]);
+  const q = query.trim();
+  const { data, isFetching } = useQuery({
+    queryKey: ['searchUsers', q],
+    queryFn: () => api.searchUsers(q),
+    enabled: Boolean(q),
+    staleTime: 10_000,
+  });
+  const results = data?.results || [];
 
   return (
     <div className="bg-primary mx-auto min-h-screen max-w-md px-4 pb-6 pt-4">
@@ -53,14 +39,14 @@ export default function SearchPage() {
         </div>
       </header>
 
-      {loading && (
+      {isFetching && (
         <div className="mb-3 flex items-center gap-2 text-sm text-muted">
           <Loader2 className="h-4 w-4 animate-spin" />
           Searching...
         </div>
       )}
 
-      {!loading && query.trim() && results.length === 0 && (
+      {!isFetching && query.trim() && results.length === 0 && (
         <div className="rounded-2xl border border-theme bg-secondary p-4">
           <p className="text-sm text-secondary">No search id, may be user wasn&apos;t using this app.</p>
           <Link
@@ -72,7 +58,7 @@ export default function SearchPage() {
         </div>
       )}
 
-      {!loading && results.length > 0 && <SearchResultsList results={results} />}
+      {!isFetching && results.length > 0 && <SearchResultsList results={results} />}
 
       {!query.trim() && (
         <div className="rounded-2xl border border-theme bg-secondary p-4">
