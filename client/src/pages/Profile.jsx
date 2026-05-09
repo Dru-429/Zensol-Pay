@@ -118,54 +118,54 @@ export default function Profile() {
   };
 
   if (loading) {
-    return <div className="mx-auto min-h-screen max-w-md px-4 py-8 text-muted">Loading profile...</div>;
+    return <div className="mx-auto min-h-screen max-w-md px-4 py-8 text-secondary-text bg-surface">Loading profile...</div>;
   }
 
   if (!profileUser) {
-    return <div className="mx-auto min-h-screen max-w-md px-4 py-8 text-red-400">{error || 'Profile not found'}</div>;
+    return <div className="mx-auto min-h-screen max-w-md px-4 py-8 text-semantic-down bg-surface">{error || 'Profile not found'}</div>;
   }
 
   return (
-    <div className="mx-auto min-h-screen max-w-md px-4 py-5 pb-24">
+    <div className="mx-auto min-h-screen max-w-md px-4 py-5 pb-24 bg-surface">
       <header className="mb-4 flex items-center gap-3">
-        <Link to="/" className="rounded-full p-2 text-muted hover:bg-white/5">
+        <Link to="/" className="rounded-full p-2 text-secondary-text hover:bg-surface-strong">
           <ArrowLeft className="h-5 w-5" />
         </Link>
-        <h1 className="text-lg font-semibold">Profile</h1>
+        <h1 className="text-lg font-semibold text-primary-text">Profile</h1>
       </header>
 
-      <section className="rounded-3xl border border-theme bg-secondary-soft p-4">
+      <section className="rounded-3xl border border-border-color bg-card p-4">
         <div className="flex items-start gap-4">
-          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border border-white/20 text-2xl font-semibold">
+          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border border-border-soft text-2xl font-semibold text-accent bg-gradient-to-br from-accent/10 to-semantic-up/10">
             {(profileUser.profile?.full_name || profileUser.username || '?').slice(0, 1).toUpperCase()}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-xl font-semibold">{profileUser.profile?.full_name || `@${profileUser.username}`}</p>
-            <p className="truncate text-sm text-muted">@{profileUser.username}</p>
-            <p className="mt-1 text-xs text-muted">Public key: {shortAddress(primaryWallet)}</p>
+            <p className="truncate text-xl font-semibold text-primary-text">{profileUser.profile?.full_name || `@${profileUser.username}`}</p>
+            <p className="truncate text-sm text-secondary-text">@{profileUser.username}</p>
+            <p className="mt-1 text-xs text-secondary-text">Public key: {shortAddress(primaryWallet)}</p>
           </div>
         </div>
 
         <div className="mt-4 space-y-2 text-sm">
-          <p className="text-secondary">{profileUser.profile?.bio || 'No whereabouts added yet.'}</p>
+          <p className="text-secondary-text">{profileUser.profile?.bio || 'No whereabouts added yet.'}</p>
           {(links.length > 0 || editing) && (
             <div className="space-y-1">
               {editing ? (
                 <>
                   <input
-                    className="w-full rounded-xl border border-theme bg-primary px-3 py-2 text-sm text-secondary outline-none ring-theme focus:ring-1"
+                    className="w-full rounded-xl border border-border-color bg-surface px-3 py-2 text-sm text-primary-text outline-none ring-accent focus:ring-1"
                     placeholder="Link 1"
                     value={form.link1}
                     onChange={(e) => setForm((prev) => ({ ...prev, link1: e.target.value }))}
                   />
                   <input
-                    className="w-full rounded-xl border border-theme bg-primary px-3 py-2 text-sm text-secondary outline-none ring-theme focus:ring-1"
+                    className="w-full rounded-xl border border-border-color bg-surface px-3 py-2 text-sm text-primary-text outline-none ring-accent focus:ring-1"
                     placeholder="Link 2"
                     value={form.link2}
                     onChange={(e) => setForm((prev) => ({ ...prev, link2: e.target.value }))}
                   />
                   <input
-                    className="w-full rounded-xl border border-theme bg-primary px-3 py-2 text-sm text-secondary outline-none ring-theme focus:ring-1"
+                    className="w-full rounded-xl border border-border-color bg-surface px-3 py-2 text-sm text-primary-text outline-none ring-accent focus:ring-1"
                     placeholder="Link 3"
                     value={form.link3}
                     onChange={(e) => setForm((prev) => ({ ...prev, link3: e.target.value }))}
@@ -180,9 +180,9 @@ export default function Profile() {
                       href={url}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex items-center gap-2 text-sm text-secondary hover:text-accent"
+                      className="flex items-center gap-2 text-sm text-secondary-text hover:text-accent transition-colors"
                     >
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/5 text-xs text-secondary">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-surface-strong text-xs text-secondary-text">
                         <Icon className="h-3.5 w-3.5" />
                       </span>
                       <span className="truncate">{label}</span>
@@ -199,13 +199,13 @@ export default function Profile() {
             {editing && (
               <>
                 <input
-                  className="w-full rounded-xl border border-theme bg-primary px-3 py-2 text-sm text-secondary outline-none ring-theme focus:ring-1"
+                  className="w-full rounded-xl border border-border-color bg-surface px-3 py-2 text-sm text-primary-text outline-none ring-accent focus:ring-1"
                   placeholder="Display name"
                   value={form.full_name}
                   onChange={(e) => setForm((prev) => ({ ...prev, full_name: e.target.value }))}
                 />
                 <textarea
-                  className="min-h-24 w-full rounded-xl border border-theme bg-primary px-3 py-2 text-sm text-secondary outline-none ring-theme focus:ring-1"
+                  className="min-h-24 w-full rounded-xl border border-border-color bg-surface px-3 py-2 text-sm text-primary-text outline-none ring-accent focus:ring-1"
                   placeholder="Bio..."
                   value={form.bio}
                   onChange={(e) => setForm((prev) => ({ ...prev, bio: e.target.value }))}
@@ -217,7 +217,7 @@ export default function Profile() {
                 <button
                   type="button"
                   onClick={() => setEditing(true)}
-                  className="flex-1 rounded-xl border border-theme bg-primary px-3 py-2 text-sm font-medium"
+                  className="flex-1 rounded-xl border border-border-color bg-surface px-3 py-2 text-sm font-medium text-primary-text hover:bg-surface-strong transition-colors"
                 >
                   <span className="inline-flex items-center gap-2">
                     <Pencil className="h-4 w-4" />
@@ -229,7 +229,7 @@ export default function Profile() {
                   type="button"
                   onClick={onSave}
                   disabled={saveMutation.isPending}
-                  className="btn-accent flex-1 rounded-xl px-3 py-2 text-sm font-semibold disabled:opacity-60"
+                  className="bg-accent flex-1 rounded-xl px-3 py-2 text-sm font-semibold text-white disabled:opacity-60"
                 >
                   <span className="inline-flex items-center gap-2">
                     <Save className="h-4 w-4" />
@@ -239,7 +239,7 @@ export default function Profile() {
               )}
               <Link
                 to={`/transfer/${id}`}
-                className="rounded-xl border border-theme bg-primary px-3 py-2 text-sm font-medium"
+                className="rounded-xl border border-border-color bg-surface px-3 py-2 text-sm font-medium text-primary-text hover:bg-surface-strong transition-colors"
               >
                 <span className="inline-flex items-center gap-2">
                   <Send className="h-4 w-4" />
@@ -254,7 +254,7 @@ export default function Profile() {
           <div className="mt-4">
             <Link
               to={`/transfer/${id}`}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-3 py-2 text-sm font-semibold text-surface"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-3 py-2 text-sm font-semibold text-white hover:bg-blue-600 transition-colors"
             >
               <Send className="h-4 w-4" />
               Message
@@ -266,21 +266,21 @@ export default function Profile() {
       {isOwner && (
         <section className="mt-5">
           <div className="mb-2 flex items-center justify-between">
-            <h2 className="text-sm font-medium text-muted">Transaction history</h2>
-            <span className="text-xs text-muted">Last {history.length}</span>
+            <h2 className="text-sm font-medium text-secondary-text">Transaction history</h2>
+            <span className="text-xs text-secondary-text">Last {history.length}</span>
           </div>
           <div className="space-y-2">
-            {history.length === 0 && <p className="text-sm text-muted">No transactions yet.</p>}
+            {history.length === 0 && <p className="text-sm text-secondary-text">No transactions yet.</p>}
             {history.map((tx) => {
               const incoming = tx.receiver_id === user?.id;
               const other = incoming ? tx.sender?.username : tx.receiver?.username;
               return (
-                <div key={tx.id} className="flex items-center justify-between rounded-2xl border border-theme-soft bg-secondary-soft px-3 py-3">
+                <div key={tx.id} className="flex items-center justify-between rounded-2xl border border-border-soft bg-card px-3 py-3">
                   <div>
-                    <p className="text-sm font-medium">{incoming ? `From @${other}` : `To @${other}`}</p>
-                    <p className="text-xs text-muted">{new Date(tx.createdAt).toLocaleDateString()}</p>
+                    <p className="text-sm font-medium text-primary-text">{incoming ? `From @${other}` : `To @${other}`}</p>
+                    <p className="text-xs text-secondary-text">{new Date(tx.createdAt).toLocaleDateString()}</p>
                   </div>
-                  <p className={`text-sm font-semibold ${incoming ? 'text-emerald-400' : 'text-secondary'}`}>
+                  <p className={`text-sm font-semibold ${incoming ? 'text-semantic-up' : 'text-secondary-text'}`}>
                     {incoming ? '+' : '-'}{tx.amount_ui} SOL
                   </p>
                 </div>
@@ -290,7 +290,7 @@ export default function Profile() {
         </section>
       )}
 
-      {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
+      {error && <p className="mt-3 text-sm text-semantic-down">{error}</p>}
     </div>
   );
 }

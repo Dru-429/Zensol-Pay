@@ -3,14 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --color-bg-primary: #0b0f14;
-  --color-bg-secondary: #121a24;
-  --color-bg-secondary-soft: rgba(18, 26, 36, 0.8);
-  --color-border: rgba(255, 255, 255, 0.1);
-  --color-border-soft: rgba(255, 255, 255, 0.05);
-  --color-text-secondary: #cbd5e1;
-  --color-text-muted: #94a3b8;
-  --color-text-faint: #64748b;
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f7f7f7;
+  --color-bg-secondary-soft: rgba(247, 247, 247, 0.8);
+  --color-border: #dee1e6;
+  --color-border-soft: #eef0f3;
+  --color-text-primary: #0a0b0d;
+  --color-text-secondary: #5b616e;
+  --color-text-muted: #7c828a;
+  --color-text-faint: #a8acb3;
 }
 
 html,
@@ -21,8 +22,8 @@ body,
 
 
 body {
-  background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(153, 69, 255, 0.25), transparent),
-  #0b0f14;
+  background: #ffffff;
+  color: #0a0b0d;
 }
 
 .scrollbar-hide {
@@ -49,6 +50,9 @@ body {
   .border-theme-soft {
     border-color: var(--color-border-soft);
   }
+  .text-primary {
+    color: var(--color-text-primary);
+  }
   .text-secondary {
     color: var(--color-text-secondary);
   }
@@ -62,9 +66,9 @@ body {
     --tw-ring-color: theme(colors.accent);
   }
   .avatar-gradient {
-    @apply bg-gradient-to-br from-accent2/40 to-accent/30;
+    @apply bg-gradient-to-br from-accent2/20 to-accent/10;
   }
   .btn-accent {
-    @apply bg-gradient-to-r from-accent to-teal-400 text-surface;
+    @apply bg-accent text-white;
   }
 }

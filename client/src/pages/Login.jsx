@@ -26,44 +26,44 @@ export default function Login() {
   };
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6">
-      <h1 className="mb-2 text-3xl font-bold tracking-tight">SolPay</h1>
-      <p className="mb-8 text-sm text-muted">Sign in with your account</p>
+    <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 bg-surface">
+      <h1 className="mb-2 text-3xl font-bold tracking-tight text-primary-text">SolPay</h1>
+      <p className="mb-8 text-sm text-secondary-text">Sign in with your account</p>
       <form onSubmit={onSubmit} className="space-y-4">
         <div>
-          <label className="mb-1 block text-xs text-muted">Email</label>
+          <label className="mb-1 block text-xs text-secondary-text">Email</label>
           <input
-            className="w-full rounded-2xl border border-theme bg-secondary px-4 py-3 text-sm text-secondary outline-none ring-theme focus:ring-1"
+            className="w-full rounded-2xl border border-border-color bg-card px-4 py-3 text-sm text-primary-text outline-none ring-accent focus:ring-1"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs text-muted">Password</label>
+          <label className="mb-1 block text-xs text-secondary-text">Password</label>
           <input
             type="password"
-            className="w-full rounded-2xl border border-theme bg-secondary px-4 py-3 text-sm text-secondary outline-none ring-theme focus:ring-1"
+            className="w-full rounded-2xl border border-border-color bg-card px-4 py-3 text-sm text-primary-text outline-none ring-accent focus:ring-1"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="current-password"
           />
         </div>
-        {err && <p className="text-sm text-red-400">{err}</p>}
+        {err && <p className="text-sm text-semantic-down">{err}</p>}
         <button
           type="submit"
-          className="w-full rounded-2xl bg-gradient-to-r from-accent to-emerald-400 py-3.5 text-sm font-semibold text-surface"
+          className="w-full rounded-2xl bg-accent py-3.5 text-sm font-semibold text-white"
         >
           Sign in
         </button>
       </form>
-      <p className="mt-6 text-center text-sm text-muted">
+      <p className="mt-6 text-center text-sm text-secondary-text">
         No account?{' '}
-        <Link to="/register" className="text-accent">
+        <Link to="/register" className="text-accent font-semibold">
           Register
         </Link>
       </p>
-      <p className="mt-4 text-center text-xs text-faint">
+      <p className="mt-4 text-center text-xs text-muted-text">
         Demo: alice@solpay.demo / demo1234
       </p>
     </div>

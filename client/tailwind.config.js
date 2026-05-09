@@ -4,10 +4,19 @@ export default {
   theme: {
     extend: {
       colors: {
-        surface: '#0b0f14',
-        card: '#121a24',
-        accent: '#14f195',
-        accent2: '#9945ff',
+        surface: '#ffffff',
+        card: '#f7f7f7',
+        accent: '#0052ff',
+        accent2: '#05b169',
+        'primary-text': '#0a0b0d',
+        'secondary-text': '#5b616e',
+        'muted-text': '#7c828a',
+        'border-color': '#dee1e6',
+        'border-soft': '#eef0f3',
+        'surface-strong': '#eef0f3',
+        'semantic-up': '#05b169',
+        'semantic-down': '#cf202f',
+        'accent-yellow': '#f4b000',
       },
       fontFamily: {
         sans: ['DM Sans', 'system-ui', 'sans-serif'],

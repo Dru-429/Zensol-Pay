@@ -36,23 +36,23 @@ export default function Register() {
   };
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6">
-      <h1 className="mb-2 text-3xl font-bold tracking-tight">Create account</h1>
-      <p className="mb-8 text-sm text-muted">Link a @username to your Solana wallet</p>
+    <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 bg-surface">
+      <h1 className="mb-2 text-3xl font-bold tracking-tight text-primary-text">Create account</h1>
+      <p className="mb-8 text-sm text-secondary-text">Link a @username to your Solana wallet</p>
       <form onSubmit={onSubmit} className="space-y-4">
         <div>
-          <label className="mb-1 block text-xs text-muted">Email</label>
+          <label className="mb-1 block text-xs text-secondary-text">Email</label>
           <input
-            className="w-full rounded-2xl border border-theme bg-secondary px-4 py-3 text-sm text-secondary outline-none ring-theme focus:ring-1"
+            className="w-full rounded-2xl border border-border-color bg-card px-4 py-3 text-sm text-primary-text outline-none ring-accent focus:ring-1"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs text-muted">@username</label>
+          <label className="mb-1 block text-xs text-secondary-text">@username</label>
           <input
-            className="w-full rounded-2xl border border-theme bg-secondary px-4 py-3 text-sm text-secondary outline-none ring-theme focus:ring-1"
+            className="w-full rounded-2xl border border-border-color bg-card px-4 py-3 text-sm text-primary-text outline-none ring-accent focus:ring-1"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="alice"
@@ -60,39 +60,39 @@ export default function Register() {
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs text-muted">Display name</label>
+          <label className="mb-1 block text-xs text-secondary-text">Display name</label>
           <input
-            className="w-full rounded-2xl border border-theme bg-secondary px-4 py-3 text-sm text-secondary outline-none ring-theme focus:ring-1"
+            className="w-full rounded-2xl border border-border-color bg-card px-4 py-3 text-sm text-primary-text outline-none ring-accent focus:ring-1"
             value={full_name}
             onChange={(e) => setFullName(e.target.value)}
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs text-muted">Password</label>
+          <label className="mb-1 block text-xs text-secondary-text">Password</label>
           <input
             type="password"
-            className="w-full rounded-2xl border border-theme bg-secondary px-4 py-3 text-sm text-secondary outline-none ring-theme focus:ring-1"
+            className="w-full rounded-2xl border border-border-color bg-card px-4 py-3 text-sm text-primary-text outline-none ring-accent focus:ring-1"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
-        <p className="text-xs text-muted">
+        <p className="text-xs text-secondary-text">
           Connected wallet:{' '}
-          <span className="text-secondary">{publicKey ? publicKey.toBase58().slice(0, 8) + '…' : 'none'}</span>{' '}
+          <span className="text-primary-text font-semibold">{publicKey ? publicKey.toBase58().slice(0, 8) + '…' : 'none'}</span>{' '}
           (optional — adds primary address)
         </p>
-        {err && <p className="text-sm text-red-400">{err}</p>}
+        {err && <p className="text-sm text-semantic-down">{err}</p>}
         <button
           type="submit"
-          className="w-full rounded-2xl bg-gradient-to-r from-accent2 to-fuchsia-500 py-3.5 text-sm font-semibold text-white"
+          className="w-full rounded-2xl bg-accent py-3.5 text-sm font-semibold text-white"
         >
           Sign up
         </button>
       </form>
-      <p className="mt-6 text-center text-sm text-muted">
+      <p className="mt-6 text-center text-sm text-secondary-text">
         Have an account?{' '}
-        <Link to="/login" className="text-accent">
+        <Link to="/login" className="text-accent font-semibold">
           Sign in
         </Link>
       </p>

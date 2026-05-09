@@ -89,19 +89,19 @@ export default function Transfer() {
   });
 
   return (
-    <div className="bg-primary mx-auto flex min-h-screen max-w-md flex-col">
-      <header className="bg-primary sticky top-0 z-10 flex items-center gap-3 border-b border-theme-soft px-3 py-3 backdrop-blur">
+    <div className="bg-surface mx-auto flex min-h-screen max-w-md flex-col">
+      <header className="bg-surface sticky top-0 z-10 flex items-center gap-3 border-b border-border-soft px-3 py-3 backdrop-blur">
         <Link
           to="/"
-          className="rounded-full p-2 text-muted hover:bg-white/5"
+          className="rounded-full p-2 text-secondary-text hover:bg-surface-strong"
         >
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <div className="min-w-0 flex-1">
-          <p className="truncate font-semibold">
+          <p className="truncate font-semibold text-primary-text">
             {isSelf ? "Self transfer" : peer?.profile?.full_name || `@${peer?.username}`}
           </p>
-          <p className="truncate text-xs text-muted">
+          <p className="truncate text-xs text-secondary-text">
             {isSelf
               ? "Move funds between your wallets"
               : recipientPk
@@ -112,7 +112,7 @@ export default function Transfer() {
         <button
           type="button"
           onClick={() => setSheet(true)}
-          className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-surface"
+          className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white"
         >
           Pay
         </button>
@@ -120,7 +120,7 @@ export default function Transfer() {
 
       <div className="flex-1 space-y-3 overflow-y-auto px-3 py-4 pb-36">
         {loadErr && (
-          <p className="text-center text-sm text-red-400">{loadErr}</p>
+          <p className="text-center text-sm text-semantic-down">{loadErr}</p>
         )}
         {timeline.map((item) => {
           if (item.kind === "transfer") {
@@ -134,8 +134,8 @@ export default function Transfer() {
                 <div
                   className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm ${
                     mine
-                      ? "rounded-br-md btn-accent"
-                      : "rounded-bl-md bg-secondary text-white"
+                      ? "rounded-br-md bg-accent text-white"
+                      : "rounded-bl-md bg-surface-strong text-primary-text border border-border-color"
                   }`}
                 >
                   <p className="font-semibold">
@@ -164,11 +164,11 @@ export default function Transfer() {
             >
               <div
                 className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm ${
-                  mine ? "rounded-br-md bg-white/10" : "rounded-bl-md bg-secondary"
+                  mine ? "rounded-br-md bg-accent text-white" : "rounded-bl-md bg-surface-strong text-primary-text border border-border-color"
                 }`}
               >
                 <p>{msg.text}</p>
-                <p className="mt-1 text-[10px] text-muted">
+                <p className="mt-1 text-[10px] opacity-70">
                   {formatTime(msg.createdAt)}
                 </p>
               </div>
@@ -177,17 +177,17 @@ export default function Transfer() {
         })}
       </div>
 
-      <footer className="bg-primary fixed bottom-0 left-0 right-0 border-t border-theme p-3 backdrop-blur">
+      <footer className="bg-surface fixed bottom-0 left-0 right-0 border-t border-border-soft p-3 backdrop-blur">
         <div className="mx-auto flex max-w-md gap-2">
           <button
             type="button"
             onClick={() => setSheet(true)}
-            className="rounded-2xl bg-accent2 px-5 text-white"
+            className="rounded-2xl bg-accent px-5 text-white font-semibold"
           >
             Pay
           </button>
           <input
-            className="flex-1 rounded-full border border-theme bg-secondary px-4 py-3 text-sm text-secondary outline-none ring-theme focus:ring-1"
+            className="flex-1 rounded-full border border-border-color bg-card px-4 py-3 text-sm text-primary-text outline-none ring-accent focus:ring-1"
             placeholder="Message…"
             value={text}
             onChange={(e) => setText(e.target.value)}
@@ -196,7 +196,7 @@ export default function Transfer() {
           <button
             type="button"
             onClick={sendChat}
-            className="rounded-full bg-white/10 px-4 py-3 text-sm"
+            className="rounded-full bg-surface-strong border border-border-color px-4 py-3 text-sm text-secondary-text hover:bg-border-soft"
           >
             <Send className="h-5 w-5" />
           </button>

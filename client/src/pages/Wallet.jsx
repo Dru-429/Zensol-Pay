@@ -89,22 +89,22 @@ export default function Wallet() {
   }, [data]);
 
   return (
-    <div className="mx-auto min-h-screen max-w-md px-4 pb-24 pt-5">
+    <div className="mx-auto min-h-screen max-w-md px-4 pb-24 pt-5 bg-surface">
       <header className="mb-4 flex items-center gap-3">
-        <button onClick={() => nav(-1)} className="rounded-full p-2 text-muted hover:bg-white/5">
+        <button onClick={() => nav(-1)} className="rounded-full p-2 text-secondary-text hover:bg-surface-strong">
           <ArrowLeft className="h-5 w-5" />
         </button>
-        <h1 className="text-lg font-semibold">Wallet</h1>
+        <h1 className="text-lg font-semibold text-primary-text">Wallet</h1>
       </header>
 
-      <section className="rounded-3xl border border-theme bg-secondary-soft p-4">
+      <section className="rounded-3xl border border-border-color bg-card p-4">
         <div className="flex items-center justify-between">
           <div className="min-w-0">
-            <p className="text-xs text-muted">Account</p>
+            <p className="text-xs text-secondary-text">Account</p>
             <select
               value={selected}
               onChange={(e) => setSelected(e.target.value)}
-              className="mt-1 w-full max-w-[220px] truncate rounded-xl border border-theme bg-primary px-3 py-2 text-sm text-secondary outline-none ring-theme focus:ring-1"
+              className="mt-1 w-full max-w-[220px] truncate rounded-xl border border-border-color bg-surface px-3 py-2 text-sm text-primary-text outline-none ring-accent focus:ring-1"
             >
               {accounts.map((a) => (
                 <option key={a.address} value={a.address}>
@@ -113,18 +113,18 @@ export default function Wallet() {
               ))}
             </select>
           </div>
-          <div className="rounded-2xl border border-theme bg-primary p-3 text-secondary">
+          <div className="rounded-2xl border border-border-color bg-surface p-3 text-secondary-text">
             <WalletIcon className="h-5 w-5" />
           </div>
         </div>
 
         <div className="mt-5">
           {loading ? (
-            <p className="text-sm text-muted">Loading balances…</p>
+            <p className="text-sm text-secondary-text">Loading balances…</p>
           ) : err ? (
-            <p className="text-sm text-red-400">{err}</p>
+            <p className="text-sm text-semantic-down">{err}</p>
           ) : (
-            <p className="text-5xl font-semibold tracking-tight">
+            <p className="text-5xl font-semibold tracking-tight text-primary-text">
               ${money(data?.total_usd)}
             </p>
           )}
@@ -134,60 +134,60 @@ export default function Wallet() {
           <button
             type="button"
             onClick={openReceiveQr}
-            className="flex flex-col items-center gap-2 rounded-2xl border border-theme bg-primary px-2 py-3 text-xs text-secondary"
+            className="flex flex-col items-center gap-2 rounded-2xl border border-border-color bg-surface px-2 py-3 text-xs text-secondary-text hover:bg-surface-strong transition-colors"
           >
             <QrCode className="h-5 w-5 text-accent" />
             QR
           </button>
           <Link
             to="/"
-            className="flex flex-col items-center gap-2 rounded-2xl border border-theme bg-primary px-2 py-3 text-xs text-secondary"
+            className="flex flex-col items-center gap-2 rounded-2xl border border-border-color bg-surface px-2 py-3 text-xs text-secondary-text hover:bg-surface-strong transition-colors"
           >
-            <Send className="h-5 w-5 text-secondary" />
+            <Send className="h-5 w-5 text-accent" />
             Send
           </Link>
           <button
             type="button"
             onClick={() => nav('/')}
-            className="flex flex-col items-center gap-2 rounded-2xl border border-theme bg-primary px-2 py-3 text-xs text-secondary"
+            className="flex flex-col items-center gap-2 rounded-2xl border border-border-color bg-surface px-2 py-3 text-xs text-secondary-text hover:bg-surface-strong transition-colors"
           >
-            <DollarSign className="h-5 w-5 text-secondary" />
+            <DollarSign className="h-5 w-5 text-accent" />
             Sell
           </button>
           <Link
             to={`/profile/${user?.id}`}
-            className="flex flex-col items-center gap-2 rounded-2xl border border-theme bg-primary px-2 py-3 text-xs text-secondary"
+            className="flex flex-col items-center gap-2 rounded-2xl border border-border-color bg-surface px-2 py-3 text-xs text-secondary-text hover:bg-surface-strong transition-colors"
           >
-            <WalletIcon className="h-5 w-5 text-secondary" />
+            <WalletIcon className="h-5 w-5 text-accent" />
             Card
           </Link>
         </div>
       </section>
 
       <section className="mt-5">
-        <p className="mb-2 text-xs font-semibold tracking-widest text-muted">TOKENS</p>
+        <p className="mb-2 text-xs font-semibold tracking-widest text-secondary-text">TOKENS</p>
         <div className="space-y-2">
           {tokens.map((t, idx) => (
-            <div key={`${t.symbol || t.mint || idx}`} className="flex items-center justify-between rounded-2xl border border-theme-soft bg-secondary-soft px-3 py-3">
+            <div key={`${t.symbol || t.mint || idx}`} className="flex items-center justify-between rounded-2xl border border-border-soft bg-card px-3 py-3">
               <div className="flex items-center gap-3">
                 {t.logo_url ? (
                   <img
                     src={t.logo_url}
                     alt={t.symbol || t.name || 'Token'}
-                    className="h-10 w-10 rounded-full bg-white/10 object-cover"
+                    className="h-10 w-10 rounded-full bg-surface-strong object-cover"
                   />
                 ) : (
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-xs font-semibold text-secondary">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-strong text-xs font-semibold text-secondary-text">
                     {(t.symbol || t.name || 'T').slice(0, 1).toUpperCase()}
                   </div>
                 )}
                 <div>
-                  <p className="text-sm font-medium">{t.symbol || t.name || 'Token'}</p>
-                  <p className="text-xs text-muted">{fixed(t.balance, 4)} {t.symbol || ''}</p>
-                  <p className="text-[11px] text-faint">
+                  <p className="text-sm font-medium text-primary-text">{t.symbol || t.name || 'Token'}</p>
+                  <p className="text-xs text-secondary-text">{fixed(t.balance, 4)} {t.symbol || ''}</p>
+                  <p className="text-[11px] text-muted-text">
                     {t.price_usd != null ? `$${fixed(t.price_usd, 4)}` : 'No price'}{' '}
                     {t.change_24h != null && (
-                      <span className={t.change_24h >= 0 ? 'text-emerald-400' : 'text-red-400'}>
+                      <span className={t.change_24h >= 0 ? 'text-semantic-up' : 'text-semantic-down'}>
                         {t.change_24h >= 0 ? '+' : ''}
                         {fixed(t.change_24h, 2)}%
                       </span>
@@ -195,27 +195,27 @@ export default function Wallet() {
                   </p>
                 </div>
               </div>
-              <p className="text-sm font-semibold">${money(t.value_usd)}</p>
+              <p className="text-sm font-semibold text-primary-text">${money(t.value_usd)}</p>
             </div>
           ))}
       {!loading && !err && tokens.length === 0 && (
-            <p className="text-sm text-muted">No tokens found.</p>
+            <p className="text-sm text-secondary-text">No tokens found.</p>
           )}
         </div>
       </section>
 
       {qrOpen && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 p-4">
-          <div className="w-full max-w-sm rounded-3xl border border-theme bg-secondary p-6 text-center">
-            <h3 className="mb-4 font-semibold">Receive with Solana Pay</h3>
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-sm rounded-3xl border border-border-color bg-surface p-6 text-center shadow-xl">
+            <h3 className="mb-4 font-semibold text-primary-text">Receive with Solana Pay</h3>
             <div className="mx-auto mb-4 flex justify-center rounded-2xl bg-white p-3">
               <QRCodeSVG value={payUrl} size={200} />
             </div>
-            <p className="mb-4 break-all text-xs text-muted">{payUrl}</p>
+            <p className="mb-4 break-all text-xs text-secondary-text">{payUrl}</p>
             <button
               type="button"
               onClick={() => setQrOpen(false)}
-              className="rounded-full bg-white/10 px-6 py-2 text-sm"
+              className="rounded-full bg-surface-strong border border-border-color px-6 py-2 text-sm text-primary-text hover:bg-border-soft transition-colors"
             >
               Close
             </button>

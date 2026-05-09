@@ -34,83 +34,83 @@ export default function PubkeyLookupPage() {
   const error = errObj?.message || '';
 
   return (
-    <div className="bg-primary mx-auto min-h-screen max-w-md px-4 pb-6 pt-4">
+    <div className="bg-surface mx-auto min-h-screen max-w-md px-4 pb-6 pt-4">
       <header className="mb-4 flex items-center gap-3">
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="rounded-full p-2 text-muted hover:bg-white/5"
+          className="rounded-full p-2 text-secondary-text hover:bg-surface-strong"
         >
           <ArrowLeft className="h-5 w-5" />
         </button>
-        <h1 className="text-lg font-semibold">Find by public key</h1>
+        <h1 className="text-lg font-semibold text-primary-text">Find by public key</h1>
       </header>
 
       <form onSubmit={run} className="mb-4">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-secondary-text" />
           <input
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             placeholder="Paste Solana public key"
-            className="w-full rounded-2xl border border-theme bg-secondary py-3 pl-10 pr-4 text-sm text-secondary outline-none ring-theme focus:ring-1"
+            className="w-full rounded-2xl border border-border-color bg-card py-3 pl-10 pr-4 text-sm text-primary-text outline-none ring-accent focus:ring-1"
           />
         </div>
       </form>
 
       {loading && (
-        <div className="mb-4 flex items-center gap-2 text-sm text-muted">
+        <div className="mb-4 flex items-center gap-2 text-sm text-secondary-text">
           <Loader2 className="h-4 w-4 animate-spin" />
           Fetching wallet details...
         </div>
       )}
 
-      {error && <p className="mb-4 text-sm text-red-400">{error}</p>}
+      {error && <p className="mb-4 text-sm text-semantic-down">{error}</p>}
 
       {data && (
         <div className="space-y-3">
-          <section className="rounded-2xl border border-theme bg-secondary p-4">
-            <p className="text-xs text-muted">Wallet</p>
-            <p className="mt-1 break-all text-sm text-secondary">{data.address}</p>
+          <section className="rounded-2xl border border-border-color bg-card p-4">
+            <p className="text-xs text-secondary-text">Wallet</p>
+            <p className="mt-1 break-all text-sm text-primary-text">{data.address}</p>
           </section>
 
-          <section className="rounded-2xl border border-theme bg-secondary p-4">
-            <p className="text-sm font-medium">Identity</p>
-            <p className="mt-2 text-xs text-muted">
+          <section className="rounded-2xl border border-border-color bg-card p-4">
+            <p className="text-sm font-medium text-primary-text">Identity</p>
+            <p className="mt-2 text-xs text-secondary-text">
               SNS: {data.sns_domains?.length ? data.sns_domains.join(', ') : 'No SNS domain found'}
             </p>
-            <p className="mt-1 text-xs text-muted">
+            <p className="mt-1 text-xs text-secondary-text">
               X: {data.socials?.twitter || data.socials?.x || 'Not linked'}
             </p>
           </section>
 
-          <section className="rounded-2xl border border-theme bg-secondary p-4">
-            <p className="text-sm font-medium">Activity</p>
-            <p className="mt-2 text-xs text-muted">{data.activity?.lastActiveText || 'Unknown'}</p>
-            <p className="mt-1 text-xs text-muted">
+          <section className="rounded-2xl border border-border-color bg-card p-4">
+            <p className="text-sm font-medium text-primary-text">Activity</p>
+            <p className="mt-2 text-xs text-secondary-text">{data.activity?.lastActiveText || 'Unknown'}</p>
+            <p className="mt-1 text-xs text-secondary-text">
               {num(data.activity?.txCount30d, 0)} transactions in last 30 days
             </p>
           </section>
 
-          <section className="rounded-2xl border border-theme bg-secondary p-4">
-            <p className="text-sm font-medium">Balances</p>
-            <p className="mt-2 text-xs text-muted">SOL: {num(data.sol_balance)} SOL</p>
-            <p className="mt-1 text-xs text-muted">
+          <section className="rounded-2xl border border-border-color bg-card p-4">
+            <p className="text-sm font-medium text-primary-text">Balances</p>
+            <p className="mt-2 text-xs text-secondary-text">SOL: {num(data.sol_balance)} SOL</p>
+            <p className="mt-1 text-xs text-secondary-text">
               Portfolio value: {data.total_usd == null ? '—' : `$${num(data.total_usd, 2)}`}
             </p>
           </section>
 
-          <section className="rounded-2xl border border-theme bg-secondary p-4">
-            <p className="mb-2 text-sm font-medium">Top Holdings</p>
+          <section className="rounded-2xl border border-border-color bg-card p-4">
+            <p className="mb-2 text-sm font-medium text-primary-text">Top Holdings</p>
             <div className="space-y-2">
-              {(data.top_holdings || []).length === 0 && <p className="text-xs text-muted">No token data</p>}
+              {(data.top_holdings || []).length === 0 && <p className="text-xs text-secondary-text">No token data</p>}
               {(data.top_holdings || []).map((token) => (
                 <div key={`${token.symbol}-${token.name}`} className="flex items-center justify-between text-xs">
                   <div>
-                    <p className="text-secondary">{token.symbol || token.name}</p>
-                    <p className="text-muted">{num(token.balance)}</p>
+                    <p className="text-primary-text font-medium">{token.symbol || token.name}</p>
+                    <p className="text-secondary-text">{num(token.balance)}</p>
                   </div>
-                  <p className="text-secondary">
+                  <p className="text-primary-text font-medium">
                     {token.value_usd == null ? '—' : `$${num(token.value_usd, 2)}`}
                   </p>
                 </div>
