@@ -15,6 +15,7 @@ import {
   ChevronRight,
   ScanLine,
   Coins,
+  DollarSign,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { api } from "../lib/api.js";
@@ -132,7 +133,9 @@ export default function Dashboard() {
             className="rounded-xl border border-border-color bg-card p-3 text-secondary-text hover:bg-surface-strong hover:text-accent h-20 w-18 flex justify-center items-center"
             title="Wallet"
           >
-            <Coins className="h-10 w-10" />
+            {/* <Coins className="h-8 w-8" /> */}
+            <DollarSign className="h-10 w-10"/>
+          
           </button>
 
           <div
