@@ -19,7 +19,7 @@ export default function SearchPage() {
 
   return (
     <div className="bg-surface mx-auto min-h-screen max-w-md px-4 pb-6 pt-4">
-      <header className="mb-4 flex items-center gap-3">
+      <header className="mb-4 flex items-center gap-3 mb-2 border-b-2 border-border pb-5">
         <button
           type="button"
           onClick={() => navigate(-1)}
@@ -47,11 +47,11 @@ export default function SearchPage() {
       )}
 
       {!isFetching && query.trim() && results.length === 0 && (
-        <div className="rounded-2xl border border-border-color bg-card p-4">
+        <div className="rounded-2xl border border-border-color bg-card p-4 text-center mt-20">
           <p className="text-sm text-secondary-text">No search id, may be user wasn&apos;t using this app.</p>
           <Link
             to="/search/pubkey"
-            className="mt-3 inline-flex rounded-full bg-accent px-4 py-2 text-xs font-semibold text-white hover:bg-blue-600 transition-colors"
+            className="mt-3 inline-flex rounded-full bg-blue-500 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-600 transition-colors"
           >
             Try finding my pub key
           </Link>
@@ -61,15 +61,12 @@ export default function SearchPage() {
       {!isFetching && results.length > 0 && <SearchResultsList results={results} />}
 
       {!query.trim() && (
-        <div className="rounded-2xl border border-border-color bg-card p-4">
-          <p className="text-sm text-secondary-text">Type to search your contacts first, then the whole platform.</p>
-          <Link
-            to="/search/pubkey"
-            className="mt-3 inline-flex rounded-full border border-border-color bg-surface px-4 py-2 text-xs text-secondary-text hover:bg-surface-strong transition-colors"
-          >
-            Try finding my pub key
-          </Link>
-        </div>
+        <Link
+          to="/search/pubkey"
+          className="rounded-full border border-border-color bg-surface px-4 py-2 text-xs text-secondary-text hover:bg-surface-strong transition-colors"
+        >
+          Try finding my pub key
+        </Link>
       )}
     </div>
   );

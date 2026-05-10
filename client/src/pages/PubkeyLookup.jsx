@@ -81,7 +81,7 @@ export default function PubkeyLookupPage() {
           <input
             value={address}
             onChange={(e) => setAddress(e.target.value)}
-            placeholder="Search Solana public key..."
+            placeholder="Search public key..."
             className="w-full rounded-2xl border-2 border-border-color bg-card py-4 pl-12 pr-4 text-[15px] font-medium text-primary-text outline-none transition-all placeholder:text-muted-text focus:border-accent focus:bg-surface focus:shadow-[0_0_0_4px_rgba(0,82,255,0.1)]"
           />
           <button
@@ -119,7 +119,7 @@ export default function PubkeyLookupPage() {
 
       {data && !loading && (
         <div className="space-y-4 transition-all">
-          
+
           {/* Wallet Address Card */}
           <section className="group relative overflow-hidden rounded-2xl border border-border-color bg-gradient-to-br from-card to-surface p-5 shadow-sm transition-all hover:border-accent/30 hover:shadow-md">
             <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-accent/5 blur-2xl" />
@@ -139,30 +139,30 @@ export default function PubkeyLookupPage() {
                 </button>
               </div>
             </div>
-          </section>
 
-          {/* Add to Contacts Card */}
-          <section className="rounded-2xl border border-border-color bg-card p-5 shadow-sm transition-all hover:border-accent/30 hover:shadow-md">
-            <div className="mb-4 flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/10">
-                <BookmarkPlus className="h-4 w-4 text-accent" />
+            {/* Add to Contacts Card */}
+            <div className='mt-5'>
+              <div className="mb-4 flex items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/10">
+                  <BookmarkPlus className="h-4 w-4 text-accent" />
+                </div>
+                <h2 className="text-sm font-semibold text-primary-text">Save to Contacts</h2>
               </div>
-              <h2 className="text-sm font-semibold text-primary-text">Save to Contacts</h2>
-            </div>
-            <div className="flex items-center gap-3">
-              <input
-                value={nickname}
-                onChange={(e) => setNickname(e.target.value)}
-                placeholder="Enter a nickname..."
-                className="flex-1 rounded-xl border border-border-color bg-surface py-2.5 px-3 text-sm text-primary-text outline-none transition-all placeholder:text-muted-text focus:border-accent focus:shadow-[0_0_0_3px_rgba(0,82,255,0.1)]"
-              />
-              <button
-                onClick={handleSaveContact}
-                disabled={!nickname.trim() || saving}
-                className="flex items-center justify-center rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-accent/90 active:scale-95 disabled:opacity-50"
-              >
-                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Save'}
-              </button>
+              <div className="flex items-center gap-3">
+                <input
+                  value={nickname}
+                  onChange={(e) => setNickname(e.target.value)}
+                  placeholder="Enter a nickname..."
+                  className="flex-1 rounded-xl border border-border-color bg-surface py-2.5 px-3 text-sm text-primary-text outline-none transition-all placeholder:text-muted-text focus:border-accent focus:shadow-[0_0_0_3px_rgba(0,82,255,0.1)]"
+                />
+                <button
+                  onClick={handleSaveContact}
+                  disabled={!nickname.trim() || saving}
+                  className="flex items-center justify-center rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-accent/90 active:scale-95 disabled:opacity-50"
+                >
+                  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Save'}
+                </button>
+              </div>
             </div>
           </section>
 

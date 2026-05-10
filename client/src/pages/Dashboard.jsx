@@ -104,8 +104,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-         //controles
-        <div className="flex w-full justify-between mb-3">
+        <div className="mt-10 flex w-full justify-between mb-3">
           <button
             type="button"
             onClick={openReceiveQr}
