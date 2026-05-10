@@ -118,7 +118,7 @@ export default function Chats() {
           {recent.map((c) => (
             <Link
               key={c.id}
-              to={`/transfer/${c.contact_user_id}`}
+              to={`/transfer/${c.contact_user_id || c.saved_pubkey}`}
               className="flex w-20 shrink-0 flex-col items-center gap-1"
             >
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-surface-strong overflow-hidden border border-border-soft">
@@ -129,7 +129,7 @@ export default function Chats() {
                 />
               </div>
               <span className="max-w-full truncate text-center text-xs text-secondary-text">
-                {c.display_name || c.contactUser?.profile?.full_name || `@${c.contactUser?.username}`}
+                {c.display_name || c.contactUser?.profile?.full_name || (c.contactUser?.username ? `@${c.contactUser.username}` : 'External')}
               </span>
             </Link>
           ))}
@@ -166,7 +166,7 @@ export default function Chats() {
           {contacts.filter(c => c.contact_user_id !== user?.id).map((c) => (
             <Link
               key={c.id}
-              to={`/transfer/${c.contact_user_id}`}
+              to={`/transfer/${c.contact_user_id || c.saved_pubkey}`}
               className="flex items-center gap-3 border-b border-border-soft px-3 py-3 hover:bg-surface-strong transition-colors"
             >
               <div className="flex h-11 w-11 items-center justify-center rounded-full bg-surface-strong overflow-hidden border border-border-soft">
@@ -178,10 +178,10 @@ export default function Chats() {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="truncate font-medium text-primary-text">
-                  {c.display_name || c.contactUser?.profile?.full_name}
+                  {c.display_name || c.contactUser?.profile?.full_name || 'External Wallet'}
                 </p>
                 <p className="truncate text-xs text-secondary-text">
-                  @{c.contactUser?.username}
+                  {c.contactUser?.username ? `@${c.contactUser.username}` : (c.saved_pubkey ? `${c.saved_pubkey.slice(0, 4)}...${c.saved_pubkey.slice(-4)}` : 'Unknown')}
                 </p>
               </div>
               <ChevronRight className="h-4 w-4 shrink-0 text-muted-text" />

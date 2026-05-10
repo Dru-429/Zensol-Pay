@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { ArrowLeft, Search, Wallet, User, Activity, Coins, Copy, Check } from 'lucide-react';
+import { ArrowLeft, Search, Wallet, User, Activity, Coins, Copy, Check, BookmarkPlus, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../lib/api.js';
 
 function num(value, digits = 4) {
@@ -14,6 +14,9 @@ export default function PubkeyLookupPage() {
   const [address, setAddress] = useState('');
   const [submitted, setSubmitted] = useState('');
   const [copied, setCopied] = useState(false);
+  const queryClient = useQueryClient();
+  const [nickname, setNickname] = useState('');
+  const [saving, setSaving] = useState(false);
 
   const run = async (e) => {
     e.preventDefault();
@@ -26,6 +29,23 @@ export default function PubkeyLookupPage() {
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleSaveContact = async () => {
+    if (!nickname.trim()) return;
+    setSaving(true);
+    try {
+      await api.saveContact({
+        saved_pubkey: data.address,
+        display_name: nickname.trim(),
+      });
+      queryClient.invalidateQueries({ queryKey: ["contacts"] });
+      navigate('/chats');
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const {
@@ -118,6 +138,31 @@ export default function PubkeyLookupPage() {
                   {copied ? <Check className="h-4 w-4 text-semantic-up" /> : <Copy className="h-4 w-4" />}
                 </button>
               </div>
+            </div>
+          </section>
+
+          {/* Add to Contacts Card */}
+          <section className="rounded-2xl border border-border-color bg-card p-5 shadow-sm transition-all hover:border-accent/30 hover:shadow-md">
+            <div className="mb-4 flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/10">
+                <BookmarkPlus className="h-4 w-4 text-accent" />
+              </div>
+              <h2 className="text-sm font-semibold text-primary-text">Save to Contacts</h2>
+            </div>
+            <div className="flex items-center gap-3">
+              <input
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+                placeholder="Enter a nickname..."
+                className="flex-1 rounded-xl border border-border-color bg-surface py-2.5 px-3 text-sm text-primary-text outline-none transition-all placeholder:text-muted-text focus:border-accent focus:shadow-[0_0_0_3px_rgba(0,82,255,0.1)]"
+              />
+              <button
+                onClick={handleSaveContact}
+                disabled={!nickname.trim() || saving}
+                className="flex items-center justify-center rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-accent/90 active:scale-95 disabled:opacity-50"
+              >
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Save'}
+              </button>
             </div>
           </section>
 

@@ -23,7 +23,7 @@
     "node-cache": "^5.1.2"
   },
   "devDependencies": {
-    "prisma": "^7.8.0"
+    "prisma": "^6.0.0"
   },
   "prisma": {
     "seed": "node prisma/seed.js"

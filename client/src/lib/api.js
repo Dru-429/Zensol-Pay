@@ -53,6 +53,7 @@ export const api = {
   setPrimaryWallet: (id, wallet_id) =>
     request(`/api/users/${encodeURIComponent(id)}/primary-wallet`, { method: 'PUT', body: JSON.stringify({ wallet_id }) }),
   contacts: () => request('/api/contacts'),
+  saveContact: (body) => request('/api/contacts', { method: 'POST', body: JSON.stringify(body) }),
   myTransfers: () => request('/api/transfers/mine'),
   transfersWith: (userId) => request(`/api/transfers/with/${userId}`),
   recordTransfer: (body) => request('/api/transfers', { method: 'POST', body: JSON.stringify(body) }),

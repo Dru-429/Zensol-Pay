@@ -50,42 +50,44 @@ model WalletAccount {
 model Contact {
   id              String  @id @default(cuid())
   owner_id        String
-  contact_user_id String
+  contact_user_id String?
+  saved_pubkey    String?
   display_name    String?
   is_recent       Boolean @default(false)
   owner           User    @relation("ContactOwner", fields: [owner_id], references: [id], onDelete: Cascade)
-  contactUser     User    @relation("ContactTarget", fields: [contact_user_id], references: [id], onDelete: Cascade)
+  contactUser     User?   @relation("ContactTarget", fields: [contact_user_id], references: [id], onDelete: Cascade)
 
-  @@unique([owner_id, contact_user_id])
   @@index([owner_id])
 }
 
 model Transfer {
-  id          String   @id @default(cuid())
-  sender_id   String
-  receiver_id String
-  amount_ui   String
-  amount_usd  Float?
-  status      String
-  is_private  Boolean  @default(false)
-  tx_hash     String?
-  createdAt   DateTime @default(now())
+  id              String   @id @default(cuid())
+  sender_id       String
+  receiver_id     String?
+  receiver_pubkey String?
+  amount_ui       String
+  amount_usd      Float?
+  status          String
+  is_private      Boolean  @default(false)
+  tx_hash         String?
+  createdAt       DateTime @default(now())
 
   sender   User      @relation("TransferSender", fields: [sender_id], references: [id])
-  receiver User      @relation("TransferReceiver", fields: [receiver_id], references: [id])
+  receiver User?     @relation("TransferReceiver", fields: [receiver_id], references: [id])
   messages Message[]
 }
 
 model Message {
   id                  String   @id @default(cuid())
   sender_id           String
-  receiver_id         String
+  receiver_id         String?
+  receiver_pubkey     String?
   text                String
   related_transfer_id String?
   createdAt           DateTime @default(now())
 
   sender   User      @relation("MessageSender", fields: [sender_id], references: [id])
-  receiver User      @relation("MessageReceiver", fields: [receiver_id], references: [id])
+  receiver User?     @relation("MessageReceiver", fields: [receiver_id], references: [id])
   transfer Transfer? @relation(fields: [related_transfer_id], references: [id])
 
   @@index([sender_id, receiver_id])

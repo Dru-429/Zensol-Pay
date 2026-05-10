@@ -64,13 +64,15 @@ usersRouter.get('/search', authMiddleware, async (req, res) => {
 
       const used = new Set();
       const tier1 = contactMatches.map((row) => {
-        used.add(row.contactUser.id);
+        if (row.contactUser) {
+          used.add(row.contactUser.id);
+        }
         return {
-          userId: row.contactUser.id,
-          username: row.contactUser.username,
-          full_name: row.contactUser.profile?.full_name || null,
+          userId: row.contactUser?.id || row.saved_pubkey,
+          username: row.contactUser?.username || row.saved_pubkey,
+          full_name: row.contactUser?.profile?.full_name || null,
           display_name: row.display_name || null,
-          public_address: row.contactUser.wallets?.[0]?.public_address || null,
+          public_address: row.saved_pubkey || row.contactUser?.wallets?.[0]?.public_address || null,
           source: 'contact',
         };
       });
@@ -147,6 +149,25 @@ usersRouter.get('/resolve', async (req, res) => {
 
 usersRouter.get('/:id', authMiddleware, async (req, res) => {
   try {
+    const id = req.params.id;
+    if (id && id.length > 30) {
+      const contact = await prisma.contact.findFirst({
+        where: { owner_id: req.user.sub, saved_pubkey: id }
+      });
+      return res.json({
+        id: id,
+        username: contact?.display_name?.replace(/\s+/g, '').toLowerCase() || 'external_user',
+        profile: {
+          full_name: contact?.display_name || 'External Wallet',
+          bio: '',
+          links: [],
+          avatar_url: null
+        },
+        wallets: [{ public_address: id, is_primary: true }],
+        recentTransfers: []
+      });
+    }
+
     const key = `users:profile:${req.params.id}`;
     const user = await getOrSet(key, 20, () =>
       prisma.user.findUnique({
