@@ -165,7 +165,7 @@ export default function Dashboard() {
           {recent.map((c) => (
             <Link
               key={c.id}
-              to={`/profile/${c.contact_user_id}`}
+              to={`/transfer/${c.contact_user_id}`}
               className="flex w-20 shrink-0 flex-col items-center gap-1"
             >
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-surface-strong overflow-hidden border border-border-soft">
