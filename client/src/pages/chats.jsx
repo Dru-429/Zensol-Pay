@@ -17,7 +17,7 @@ import {
 import { useAuth } from "../context/AuthContext.jsx";
 import { api, DEFAULT_AVATAR } from "../lib/api.js";
 
-export default function Dashboard() {
+export default function Chats() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { publicKey, connected } = useWallet();
@@ -102,53 +102,6 @@ export default function Dashboard() {
             </button>
             <Search className="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-secondary-text" />
           </div>
-        </div>
-
-         //controles
-        <div className="flex w-full justify-between mb-3">
-          <button
-            type="button"
-            onClick={openReceiveQr}
-            className="rounded-xl border border-border-color bg-card p-3 hover:bg-surface-strong h-20 w-18 flex justify-center items-center flex-col text-secondary-text hover:text-accent"
-          >
-            <QrCode className="h-10 w-10" />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setVisible(true)}
-            className="rounded-xl border border-border-color bg-card p-3 text-secondary-text hover:bg-surface-strong hover:text-accent h-20 w-18 flex justify-center items-center"
-            title="Wallet"
-          >
-            <Wallet className="h-10 w-10" />
-          </button>
-
-          <button
-            type="button"
-            onClick={checkBalance}
-            className="rounded-xl border border-border-color bg-card p-3 text-secondary-text hover:bg-surface-strong hover:text-accent h-20 w-18 flex justify-center items-center"
-            title="Wallet"
-          >
-            {/* <Coins className="h-8 w-8" /> */}
-            <DollarSign className="h-10 w-10" />
-
-          </button>
-
-          <div
-            className="rounded-xl border border-border-color bg-card p-1 text-secondary-text h-20 w-18 flex flex-col justify-center items-center"
-            title="Wallet"
-          >
-            <span className="text-xl font-bold text-accent">
-              {user?.profile?.trust_score ?? "—"}
-            </span>
-
-            <span className="text-xs tracking-tighter text-accent">
-              Trust Score
-            </span>
-          </div>
-
-
-
         </div>
       </header>
 
@@ -237,24 +190,6 @@ export default function Dashboard() {
         </div>
       </section>
 
-      {qrOpen && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-sm rounded-3xl border border-border-color bg-surface p-6 text-center shadow-xl">
-            <h3 className="mb-4 font-semibold text-primary-text">Receive with Sol Pay</h3>
-            <div className="mx-auto mb-4 flex justify-center rounded-2xl bg-white p-3">
-              <QRCodeSVG value={payUrl} size={200} />
-            </div>
-            <p className="mb-4 break-all text-xs text-secondary-text">{payUrl}</p>
-            <button
-              type="button"
-              onClick={() => setQrOpen(false)}
-              className="rounded-full bg-surface-strong border border-border-color px-6 py-2 text-sm text-primary-text hover:bg-border-soft transition-colors"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

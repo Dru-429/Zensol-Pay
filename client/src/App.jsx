@@ -9,6 +9,7 @@ import Wallet from './pages/Wallet.jsx';
 import SearchPage from './pages/Search.jsx';
 import PubkeyLookupPage from './pages/PubkeyLookup.jsx';
 import Navbar from './components/Navbar.jsx';
+import Chats from './pages/chats.jsx';
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
@@ -74,6 +75,14 @@ export default function App() {
           element={
             <PrivateRoute>
               <PubkeyLookupPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/chats"
+          element={
+            <PrivateRoute>
+              <Chats />
             </PrivateRoute>
           }
         />
