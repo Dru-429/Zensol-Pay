@@ -48,7 +48,7 @@ export default function Navbar() {
           <MessageCircle className={`w-6 h-6 ${isActive ? 'fill-current' : ''}`} />
         </div>
       ),
-      path: '/search', // Chat usually starts from search or dashboard contacts
+      path: '/chats',
     },
     {
       label: 'You',
