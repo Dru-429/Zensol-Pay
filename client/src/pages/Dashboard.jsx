@@ -11,10 +11,7 @@ import {
   Search,
   QrCode,
   Wallet,
-  LogOut,
   ChevronRight,
-  ScanLine,
-  Coins,
   DollarSign,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext.jsx";
@@ -25,9 +22,6 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const { publicKey, connected } = useWallet();
   const { setVisible } = useWalletModal();
-  const [balanceOpen, setBalanceOpen] = useState(false);
-  const [balanceData, setBalanceData] = useState(null);
-  const [balanceLoading, setBalanceLoading] = useState(false);
   const [balanceErr, setBalanceErr] = useState("");
   const [qrOpen, setQrOpen] = useState(false);
   const [payUrl, setPayUrl] = useState("");
@@ -67,7 +61,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="mx-auto min-h-screen max-w-md pb-28 bg-surface">
+    <div className="mx-auto min-h-screen max-w-md pb-28 bg-surface overflow-x-hidden ">
       <header className="sticky top-0 z-10 border-b-2 border-border bg-surface px-4 pb-3 pt-4 backdrop-blur-md rounded-2xl">
         <div className="mb-3 flex items-center justify-between">
           <Link to={`/profile/${user?.id}`} className=" flex items-center gap-3">
@@ -234,20 +228,6 @@ export default function Dashboard() {
           ))}
         </div>
       </section>
-
-      <div className="fixed max-w-md bottom-0 -translate-x-1/2 left-1/2 px-10-4 border-t border-border-soft p-4 backdrop-blur-md">
-        <div className="mx-auto flex w-full gap-3 px-10">
-          <button
-            type="button"
-            onClick={checkBalance}
-            className="flex-1 rounded-2xl bg-accent py-3.5 text-sm font-semibold text-white shadow-lg shadow-accent/20 hover:bg-blue-600 transition-colors"
-          >
-            Balance
-          </button>
-        </div>
-      </div>
-
-
 
       {qrOpen && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4">

@@ -8,6 +8,7 @@ import Profile from './pages/Profile.jsx';
 import Wallet from './pages/Wallet.jsx';
 import SearchPage from './pages/Search.jsx';
 import PubkeyLookupPage from './pages/PubkeyLookup.jsx';
+import Navbar from './components/Navbar.jsx';
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
@@ -24,7 +25,7 @@ function PrivateRoute({ children }) {
 
 export default function App() {
   return (
-    <div className="bg-zinc-950 w-screen">
+    <div className="bg-zinc-950">
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -78,6 +79,7 @@ export default function App() {
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <Navbar />
     </div>
   );
 }
