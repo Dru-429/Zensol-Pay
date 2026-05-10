@@ -14,6 +14,7 @@ import {
   LogOut,
   ChevronRight,
   ScanLine,
+  Coins,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { api } from "../lib/api.js";
@@ -66,75 +67,89 @@ export default function Dashboard() {
 
   return (
     <div className="mx-auto min-h-screen max-w-md pb-28 bg-surface">
-      <header className="sticky top-0 z-10 border-b border-border-soft bg-surface px-4 pb-3 pt-4 backdrop-blur-md">
+      <header className="sticky top-0 z-10 border-b-2 border-border bg-surface px-4 pb-3 pt-4 backdrop-blur-md rounded-2xl">
         <div className="mb-3 flex items-center justify-between">
           <Link to={`/profile/${user?.id}`} className=" flex items-center gap-3">
             <div>
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-semantic-up/20 to-accent/10 text-lg font-bold text-accent">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-200 text-lg font-bold text-accent">
                 {(user?.profile?.full_name || `@${user?.username}`)
                   .slice(0, 1)
                   .toUpperCase()}
               </div>
             </div>
             <div className="flex flex-col">
-              <p className="text-xs text-secondary-text">Hello</p>
               <p className="text-lg font-semibold text-primary-text">
                 {user?.profile?.full_name || `@${user?.username}`}
               </p>
+              <div className="flex gap-1 -mt-1">
+                {connected && (
+                  <span className="text-xs text-semantic-up tracking-tigher">
+                    Wallet linked
+                  </span>
+                )}
+              </div>
             </div>
           </Link>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setVisible(true)}
-              className="rounded-full border border-border-color bg-card p-2.5 text-secondary-text hover:bg-surface-strong"
-              title="Wallet"
-            >
-              <Wallet className="h-5 w-5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => logout()}
-              className="rounded-full border border-border-color bg-card p-2.5 text-secondary-text hover:bg-surface-strong"
-            >
-              <LogOut className="h-5 w-5" />
-            </button>
-          </div>
         </div>
-        <div className="flex gap-2">
+
+        <div className="flex gap-2 mt-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-secondary-text" />
             <button
               type="button"
               onClick={() => navigate("/search")}
-              className="w-full rounded-full border border-border-color bg-card py-2.5 pl-10 pr-4 text-sm text-secondary-text outline-none ring-accent focus:ring-1"
+              className="w-full rounded-full relative border border-border-color bg-card py-2.5 pl-3 pr-4 text-sm text-secondary-text outline-none ring-accent focus:ring-2"
             >
-              Search @username, name or pubkey
+              <span className="relative -left-16">
+                Search @username, name or pubkey
+              </span>
             </button>
+            <Search className="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-secondary-text" />
           </div>
+        </div>
+
+         //controles
+        <div className="flex w-full justify-between mb-3">
           <button
             type="button"
             onClick={openReceiveQr}
-            className="rounded-full border border-border-color bg-card p-2.5 hover:bg-surface-strong"
+            className="rounded-xl border border-border-color bg-card p-3 hover:bg-surface-strong h-20 w-18 flex justify-center items-center"
           >
-            <QrCode className="h-5 w-5 text-accent" />
+            <QrCode className="h-10 w-10 text-secondary-text" />
           </button>
+
           <button
             type="button"
-            className="rounded-full border border-border-color bg-card p-2.5 hover:bg-surface-strong"
+            onClick={() => setVisible(true)}
+            className="rounded-xl border border-border-color bg-card p-3 text-secondary-text hover:bg-surface-strong h-20 w-18 flex justify-center items-center"
+            title="Wallet"
           >
-            <ScanLine className="h-5 w-5 text-secondary-text" />
+            <Wallet className="h-10 w-10" />
           </button>
-        </div>
-        <div className="mt-3 flex gap-2">
-          <span className="rounded-full bg-surface-strong px-3 py-1 text-xs text-secondary-text border border-border-soft">
-            Trust {user?.profile?.trust_score ?? "—"}
-          </span>
-          {connected && (
-            <span className="rounded-full bg-semantic-up/10 px-3 py-1 text-xs text-semantic-up border border-semantic-up/30">
-              Wallet linked
+
+          <button
+            type="button"
+            onClick={checkBalance}
+            className="rounded-xl border border-border-color bg-card p-3 text-secondary-text hover:bg-surface-strong h-20 w-18 flex justify-center items-center"
+            title="Wallet"
+          >
+            <Coins className="h-10 w-10" />
+          </button>
+
+          <div
+            className="rounded-xl border border-border-color bg-card p-1 text-secondary-text h-20 w-18 flex flex-col justify-center items-center"
+            title="Wallet"
+          >
+            <span className="text-xl font-bold">
+              {user?.profile?.trust_score ?? "—"}
             </span>
-          )}
+
+            <span className="text-xs tracking-tighter">
+              Trust Score
+            </span>
+          </div>
+
+
+
         </div>
       </header>
 
@@ -170,7 +185,29 @@ export default function Dashboard() {
       <section className="px-4 pt-6">
         <h2 className="mb-3 text-sm font-medium text-secondary-text">People</h2>
         <div className="space-y-2">
-          {contacts.map((c) => (
+          {user && (
+            <Link
+              key="self"
+              to="/transfer/self"
+              className="flex items-center gap-3 rounded-2xl border border-border-soft bg-card px-3 py-3 hover:bg-surface-strong transition-colors"
+            >
+              <div className="avatar-gradient flex h-11 w-11 items-center justify-center rounded-full text-lg font-bold text-accent">
+                {((user?.profile?.full_name || user?.username || "?")
+                  .slice(0, 1)
+                  .toUpperCase())}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-medium text-primary-text">
+                  {user?.profile?.full_name || user?.username} (self)
+                </p>
+                <p className="truncate text-xs text-secondary-text">
+                  @{user?.username}
+                </p>
+              </div>
+              <ChevronRight className="h-4 w-4 shrink-0 text-muted-text" />
+            </Link>
+          )}
+          {contacts.filter(c => c.contact_user_id !== user?.id).map((c) => (
             <Link
               key={c.id}
               to={`/profile/${c.contact_user_id}`}
@@ -195,19 +232,19 @@ export default function Dashboard() {
         </div>
       </section>
 
-      <div className="fixed bottom-0 left-0 right-0 border-t border-border-soft bg-surface p-4 backdrop-blur-md">
-        <div className="mx-auto flex max-w-md gap-3">
+      <div className="fixed max-w-md bottom-0 -translate-x-1/2 left-1/2 px-10-4 border-t border-border-soft p-4 backdrop-blur-md">
+        <div className="mx-auto flex w-full gap-3 px-10">
           <button
             type="button"
             onClick={checkBalance}
             className="flex-1 rounded-2xl bg-accent py-3.5 text-sm font-semibold text-white shadow-lg shadow-accent/20 hover:bg-blue-600 transition-colors"
           >
-            Check balance
+            Balance
           </button>
         </div>
       </div>
 
-      
+
 
       {qrOpen && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4">

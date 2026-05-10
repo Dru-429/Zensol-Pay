@@ -43,6 +43,7 @@ export default function PrivatePaymentSheet({
     }
     return merged;
   }, [connectedAddress, user?.wallets]);
+  
   const toWalletOptions = useMemo(() => {
     const merged = [];
     for (const w of recipientWallets || []) {

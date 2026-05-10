@@ -3,15 +3,19 @@
 @tailwind utilities;
 
 :root {
+  /* Backgrounds: Shifted to light/white tones */
   --color-bg-primary: #ffffff;
-  --color-bg-secondary: #f7f7f7;
-  --color-bg-secondary-soft: rgba(247, 247, 247, 0.8);
-  --color-border: #dee1e6;
-  --color-border-soft: #eef0f3;
-  --color-text-primary: #0a0b0d;
-  --color-text-secondary: #5b616e;
-  --color-text-muted: #7c828a;
-  --color-text-faint: #a8acb3;
+  --color-bg-secondary: #f0f9ff; /* Lightest blue tint derived from #00A6FB */
+  --color-bg-secondary-soft: rgba(240, 249, 255, 0.8);
+
+  /* Borders: Using the darkest theme color with low opacity */
+  --color-border: rgba(5, 25, 35, 0.1); /* Based on #051923 */
+  --color-border-soft: rgba(5, 25, 35, 0.05);
+
+  /* Text: Repurposing the dark blues from the palette for readability */
+  --color-text-secondary: #051923; /* Darkest navy from theme */
+  --color-text-muted: #003554;    /* Deep navy */
+  --color-text-faint: #006494;    /* Medium blue */
 }
 
 html,

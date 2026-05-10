@@ -24,58 +24,60 @@ function PrivateRoute({ children }) {
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route
-        path="/"
-        element={
-          <PrivateRoute>
-            <Dashboard />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/transfer/:id"
-        element={
-          <PrivateRoute>
-            <Transfer />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/profile/:id"
-        element={
-          <PrivateRoute>
-            <Profile />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/wallet"
-        element={
-          <PrivateRoute>
-            <Wallet />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/search"
-        element={
-          <PrivateRoute>
-            <SearchPage />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/search/pubkey"
-        element={
-          <PrivateRoute>
-            <PubkeyLookupPage />
-          </PrivateRoute>
-        }
-      />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <div className="bg-zinc-950 w-screen">
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route
+          path="/"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/transfer/:id"
+          element={
+            <PrivateRoute>
+              <Transfer />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/profile/:id"
+          element={
+            <PrivateRoute>
+              <Profile />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/wallet"
+          element={
+            <PrivateRoute>
+              <Wallet />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/search"
+          element={
+            <PrivateRoute>
+              <SearchPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/search/pubkey"
+          element={
+            <PrivateRoute>
+              <PubkeyLookupPage />
+            </PrivateRoute>
+          }
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </div>
   );
 }
