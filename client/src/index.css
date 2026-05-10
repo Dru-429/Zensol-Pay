@@ -4,12 +4,12 @@
 
 :root {
   /* Backgrounds: Shifted to light/white tones */
-  --color-bg-primary: #ffffff;
-  --color-bg-secondary: #f0f9ff; /* Lightest blue tint derived from #00A6FB */
-  --color-bg-secondary-soft: rgba(240, 249, 255, 0.8);
+  --color-bg-primary: #e8f3ff;
+  --color-bg-secondary: #90d3fc; /* Lightest blue tint derived from #00A6FB */
+  --color-bg-secondary-soft: rgba(142, 197, 233, 0.8);
 
   /* Borders: Using the darkest theme color with low opacity */
-  --color-border: rgba(5, 25, 35, 0.1); /* Based on #051923 */
+  --color-border: rgba(5, 24, 33, 0.1); /* Based on #051923 */
   --color-border-soft: rgba(5, 25, 35, 0.05);
 
   /* Text: Repurposing the dark blues from the palette for readability */
@@ -26,7 +26,7 @@ body,
 
 
 body {
-  background: #ffffff;
+  background: #e3f3ff;
   color: #0a0b0d;
 }
 

@@ -112,27 +112,27 @@ export default function Dashboard() {
           <button
             type="button"
             onClick={openReceiveQr}
-            className="rounded-xl border border-border-color bg-card p-3 hover:bg-surface-strong h-20 w-18 flex justify-center items-center flex-col "
+            className="rounded-xl border border-border-color bg-card p-3 hover:bg-surface-strong h-20 w-18 flex justify-center items-center flex-col text-secondary-text hover:text-accent"
           >
-            <QrCode className="h-10 w-10 text-accent" />
+            <QrCode className="h-10 w-10" />
           </button>
 
           <button
             type="button"
             onClick={() => setVisible(true)}
-            className="rounded-xl border border-border-color bg-card p-3 text-secondary-text hover:bg-surface-strong h-20 w-18 flex justify-center items-center"
+            className="rounded-xl border border-border-color bg-card p-3 text-secondary-text hover:bg-surface-strong hover:text-accent h-20 w-18 flex justify-center items-center"
             title="Wallet"
           >
-            <Wallet className="h-10 w-10 text-accent" />
+            <Wallet className="h-10 w-10" />
           </button>
 
           <button
             type="button"
             onClick={checkBalance}
-            className="rounded-xl border border-border-color bg-card p-3 text-secondary-text hover:bg-surface-strong h-20 w-18 flex justify-center items-center"
+            className="rounded-xl border border-border-color bg-card p-3 text-secondary-text hover:bg-surface-strong hover:text-accent h-20 w-18 flex justify-center items-center"
             title="Wallet"
           >
-            <Coins className="h-10 w-10 text-accent" />
+            <Coins className="h-10 w-10" />
           </button>
 
           <div
@@ -184,14 +184,14 @@ export default function Dashboard() {
 
       <section className="px-4 pt-6">
         <h2 className="mb-3 text-sm font-medium text-secondary-text">Contacts</h2>
-        <div className="space-y-2">
+        <div className="">
           {user && (
             <Link
               key="self"
               to="/transfer/self"
-              className="flex items-center gap-3 rounded-2xl border border-border-soft bg-card px-3 py-3 hover:bg-surface-strong transition-colors"
+              className="flex items-center gap-3 border-b border-border-soft px-3 py-3 hover:bg-surface-strong transition-colors"
             >
-              <div className="avatar-gradient flex h-11 w-11 items-center justify-center rounded-full text-lg font-bold text-accent">
+              <div className="avatar-gradient flex h-11 w-11 items-center justify-center rounded-full text-lg font-bold text-accent ">
                 {((user?.profile?.full_name || user?.username || "?")
                   .slice(0, 1)
                   .toUpperCase())}
@@ -210,8 +210,8 @@ export default function Dashboard() {
           {contacts.filter(c => c.contact_user_id !== user?.id).map((c) => (
             <Link
               key={c.id}
-              to={`/profile/${c.contact_user_id}`}
-              className="flex items-center gap-3 rounded-2xl border border-border-soft bg-card px-3 py-3 hover:bg-surface-strong transition-colors"
+              to={`/transfer/${c.contact_user_id}`}
+              className="flex items-center gap-3 border-b border-border-soft px-3 py-3 hover:bg-surface-strong transition-colors"
             >
               <div className="avatar-gradient flex h-11 w-11 items-center justify-center rounded-full text-lg font-bold text-accent">
                 {(c.display_name || c.contactUser?.username || "?")
@@ -249,7 +249,7 @@ export default function Dashboard() {
       {qrOpen && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4">
           <div className="w-full max-w-sm rounded-3xl border border-border-color bg-surface p-6 text-center shadow-xl">
-            <h3 className="mb-4 font-semibold text-primary-text">Receive with Solana Pay</h3>
+            <h3 className="mb-4 font-semibold text-primary-text">Receive with Sol Pay</h3>
             <div className="mx-auto mb-4 flex justify-center rounded-2xl bg-white p-3">
               <QRCodeSVG value={payUrl} size={200} />
             </div>
