@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Send } from "lucide-react";
+import { ArrowLeft, Send, CheckCircle2, ChevronRight } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../context/AuthContext.jsx";
 import { api } from "../lib/api.js";
@@ -9,7 +9,22 @@ import PrivatePaymentSheet from "../components/PrivatePaymentSheet.jsx";
 function formatTime(iso) {
   if (!iso) return "";
   const d = new Date(iso);
-  return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit", hour12: true }).toLowerCase();
+}
+
+function formatFullDateTime(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  const options = { day: 'numeric', month: 'short' };
+  const dateStr = d.toLocaleDateString('en-IN', options);
+  const timeStr = d.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase();
+  return `${dateStr}, ${timeStr}`;
+}
+
+function formatDateLabel(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
 }
 
 export default function Transfer() {
@@ -49,9 +64,9 @@ export default function Transfer() {
   const loadErr = peerErr?.message || "";
 
   const timeline = useMemo(() => {
-    const items = [];
+    const rawItems = [];
     for (const tr of transfers) {
-      items.push({
+      rawItems.push({
         kind: "transfer",
         id: tr.id,
         at: tr.createdAt,
@@ -59,15 +74,33 @@ export default function Transfer() {
       });
     }
     for (const msg of messages) {
-      items.push({
+      rawItems.push({
         kind: "message",
         id: msg.id,
         at: msg.createdAt,
         message: msg,
       });
     }
-    items.sort((a, b) => new Date(a.at) - new Date(b.at));
-    return items;
+    rawItems.sort((a, b) => new Date(a.at) - new Date(b.at));
+
+    const itemsWithSeparators = [];
+    let lastDate = null;
+
+    for (const item of rawItems) {
+      const currentDate = new Date(item.at).toDateString();
+      if (currentDate !== lastDate) {
+        itemsWithSeparators.push({
+          kind: "separator",
+          id: `sep-${item.at}`,
+          at: item.at,
+          label: formatFullDateTime(item.at),
+        });
+        lastDate = currentDate;
+      }
+      itemsWithSeparators.push(item);
+    }
+
+    return itemsWithSeparators;
   }, [transfers, messages]);
 
   const recipientPk =
@@ -90,32 +123,30 @@ export default function Transfer() {
 
   return (
     <div className="bg-surface mx-auto flex min-h-screen max-w-md flex-col">
-      <header className="bg-surface sticky top-0 z-10 flex items-center gap-3 border-b border-border-soft px-3 py-3 backdrop-blur">
+      <header className="bg-zinc-50 hover:bg-zinc-200 sticky top-0 z-10 flex items-center gap-3 border-b rounded-b-2xl border-border px-3 py-3 backdrop-blur">
         <Link
           to="/"
           className="rounded-full p-2 text-secondary-text hover:bg-surface-strong"
         >
           <ArrowLeft className="h-5 w-5" />
         </Link>
-        <div className="min-w-0 flex-1">
-          <p className="truncate font-semibold text-primary-text">
-            {isSelf ? "Self transfer" : peer?.profile?.full_name || `@${peer?.username}`}
-          </p>
-          <p className="truncate text-xs text-secondary-text">
-            {isSelf
-              ? "Move funds between your wallets"
-              : recipientPk
-                ? `${recipientPk.slice(0, 4)}…${recipientPk.slice(-4)}`
-                : "No pubkey"}
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={() => setSheet(true)}
-          className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white"
+        <Link
+          to={isSelf ? "/" : `/profile/${id}`}
+          className="w-full"
         >
-          Pay
-        </button>
+          <div className="min-w-0 flex-1">
+            <p className="truncate font-semibold text-primary-text">
+              {isSelf ? "Self transfer" : peer?.profile?.full_name || `@${peer?.username}`}
+            </p>
+            <p className="truncate text-xs text-secondary-text">
+              {isSelf
+                ? "Move funds between your wallets"
+                : recipientPk
+                  ? `${recipientPk.slice(0, 4)}…${recipientPk.slice(-4)}`
+                  : "No pubkey"}
+            </p>
+          </div>
+        </Link>
       </header>
 
       <div className="flex-1 space-y-3 overflow-y-auto px-3 py-4 pb-36">
@@ -123,6 +154,18 @@ export default function Transfer() {
           <p className="text-center text-sm text-semantic-down">{loadErr}</p>
         )}
         {timeline.map((item) => {
+          if (item.kind === "separator") {
+            return (
+              <div key={item.id} className="flex items-center my-6">
+                <div className="flex-1 h-[1px] bg-border-color/30"></div>
+                <span className="px-4 text-[11px] text-secondary-text font-medium">
+                  {item.label}
+                </span>
+                <div className="flex-1 h-[1px] bg-border-color/30"></div>
+              </div>
+            );
+          }
+
           if (item.kind === "transfer") {
             const tr = item.transfer;
             const mine = tr.sender_id === user?.id;
@@ -131,30 +174,32 @@ export default function Transfer() {
                 key={`t-${tr.id}`}
                 className={`flex ${mine ? "justify-end" : "justify-start"}`}
               >
-                <div
-                  className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm ${
-                    mine
-                      ? "rounded-br-md bg-accent text-white"
-                      : "rounded-bl-md bg-surface-strong text-primary-text border border-border-color"
-                  }`}
-                >
-                  <p className="font-semibold">
-                    {tr.amount_ui} SOL
-                    {tr.is_private ? " · 🔒" : ""}
-                  </p>
-                  <p className="text-xs opacity-80">{tr.status}</p>
-                  {tr.tx_hash && (
-                    <p className="mt-1 truncate text-[10px] opacity-70">
-                      {tr.tx_hash}
+                <div className="relative w-full max-w-[280px] overflow-hidden rounded-3xl border border-border-color bg-card shadow-sm transition-transform active:scale-[0.98]">
+                  <div className="p-5">
+                    <p className="text-[13px] font-medium text-secondary-text mb-1">
+                      {mine ? `Payment to ${peer?.profile?.full_name || peer?.username || 'user'}` : 'Payment to you'}
                     </p>
-                  )}
-                  <p className="mt-1 text-[10px] opacity-60">
-                    {formatTime(tr.createdAt)}
-                  </p>
+                    <p className="text-3xl font-bold text-primary-text mb-4">
+                      {Number(tr.amount_ui)} SOL
+                    </p>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="flex h-5 w-5 items-center justify-center rounded-full bg-semantic-up text-white">
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                        </div>
+                        <p className="text-[12px] text-secondary-text">
+                          Paid • {formatDateLabel(tr.createdAt)}
+                        </p>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-secondary-text opacity-40" />
+                    </div>
+                  </div>
                 </div>
               </div>
             );
           }
+
           const msg = item.message;
           const mine = msg.sender_id === user?.id;
           return (
@@ -163,12 +208,14 @@ export default function Transfer() {
               className={`flex ${mine ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm ${
-                  mine ? "rounded-br-md bg-accent text-white" : "rounded-bl-md bg-surface-strong text-primary-text border border-border-color"
+                className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-[14px] ${
+                  mine 
+                    ? "bg-[#0B6BCB] text-white rounded-tr-none" 
+                    : "bg-[#F3F6F9] text-primary-text border border-border-color/30 rounded-tl-none"
                 }`}
               >
                 <p>{msg.text}</p>
-                <p className="mt-1 text-[10px] opacity-70">
+                <p className={`mt-1 text-[10px] text-right ${mine ? "text-white/70" : "text-secondary-text/70"}`}>
                   {formatTime(msg.createdAt)}
                 </p>
               </div>
@@ -177,29 +224,33 @@ export default function Transfer() {
         })}
       </div>
 
-      <footer className="bg-surface fixed bottom-0 left-0 right-0 border-t border-border-soft p-3 backdrop-blur">
-        <div className="mx-auto flex max-w-md gap-2">
+      <footer className="bg-surface/80 border-t-2 border-gray-200 rounded-xl fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md p-3 pb-safe backdrop-blur-md z-20">
+        <div className="mx-auto flex max-w-md items-center gap-3">
           <button
             type="button"
             onClick={() => setSheet(true)}
-            className="rounded-2xl bg-accent px-5 text-white font-semibold"
+            className="h-[48px] rounded-[24px] bg-[#0B6BCB] px-8 text-sm font-semibold text-white active:scale-95 transition-transform hover:scale-105"
           >
             Pay
           </button>
-          <input
-            className="flex-1 rounded-full border border-border-color bg-card px-4 py-3 text-sm text-primary-text outline-none ring-accent focus:ring-1"
-            placeholder="Message…"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && sendChat()}
-          />
-          <button
-            type="button"
-            onClick={sendChat}
-            className="rounded-full bg-surface-strong border border-border-color px-4 py-3 text-sm text-secondary-text hover:bg-border-soft"
-          >
-            <Send className="h-5 w-5" />
-          </button>
+          
+          <div className="relative flex-1 flex items-center">
+            <input
+              className="w-full rounded-[24px] bg-[#F0F4F8] border-none px-5 py-3.5 text-sm text-primary-text outline-none placeholder:text-secondary-text/60"
+              placeholder="Message…"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && sendChat()}
+            />
+            <button
+              type="button"
+              onClick={sendChat}
+              disabled={!text.trim()}
+              className="absolute right-2 p-2 text-[#0B6BCB] disabled:text-secondary-text/30"
+            >
+              <Send className="h-5 w-5" />
+            </button>
+          </div>
         </div>
       </footer>
 
