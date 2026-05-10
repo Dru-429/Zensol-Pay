@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, Pencil, Save, Send } from 'lucide-react';
+import { ArrowLeft, MoveDownIcon, Pencil, Save, Send } from 'lucide-react';
 import { FiLink, FiTwitter, FiLinkedin } from 'react-icons/fi';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -92,6 +92,14 @@ export default function Profile() {
     [profileUser]
   );
 
+  const primaryWalletId = useMemo(
+    () =>
+      profileUser?.wallets?.find((wallet) => wallet.is_primary)?.id ||
+      profileUser?.wallets?.[0]?.id ||
+      '',
+    [profileUser]
+  );
+
   const links = useMemo(() => {
     if (!profileUser?.profile?.links?.length) return [];
     return profileUser.profile.links.filter(Boolean).slice(0, 3);
@@ -105,6 +113,15 @@ export default function Profile() {
       setEditing(false);
     },
     onError: (e) => setError(e.message || 'Failed to save profile'),
+  });
+
+  const primaryMutation = useMutation({
+    mutationFn: (walletId) => api.setPrimaryWallet(id, walletId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['userProfile', id] });
+      queryClient.invalidateQueries({ queryKey: ['contacts'] });
+    },
+    onError: (e) => setError(e.message || 'Failed to set primary wallet'),
   });
 
   const onSave = async () => {
@@ -247,6 +264,25 @@ export default function Profile() {
                 </span>
               </Link>
             </div>
+            
+            <div className="mt-3">
+              <select
+                value={primaryWalletId}
+                onChange={(e) => {
+                  setError('');
+                  primaryMutation.mutate(e.target.value);
+                }}
+                disabled={primaryMutation.isPending}
+                className={"w-full rounded-xl border border-border-color bg-surface px-3 py-2 text-sm font-medium text-primary-text outline-none hover:bg-surface-strong transition-colors text-center"}
+              >
+                <option value="" disabled>Select primary wallet</option>
+                {profileUser?.wallets?.map((w) => (
+                  <option key={w.id} value={w.id}>
+                  {w.label || 'Wallet'} ({shortAddress(w.public_address)})
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         )}
 
@@ -267,9 +303,8 @@ export default function Profile() {
         <section className="mt-5">
           <div className="mb-2 flex items-center justify-between">
             <h2 className="text-sm font-medium text-secondary-text">Transaction history</h2>
-            <span className="text-xs text-secondary-text">Last {history.length}</span>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1">
             {history.length === 0 && <p className="text-sm text-secondary-text">No transactions yet.</p>}
             {history.map((tx) => {
               const incoming = tx.receiver_id === user?.id;

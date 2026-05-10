@@ -209,3 +209,28 @@ usersRouter.put('/:id', authMiddleware, async (req, res) => {
     res.status(500).json({ error: 'Failed to update profile' });
   }
 });
+
+usersRouter.put('/:id/primary-wallet', authMiddleware, async (req, res) => {
+  try {
+    if (req.user.sub !== req.params.id) return res.status(403).json({ error: 'Forbidden' });
+    const { wallet_id } = req.body || {};
+    if (!wallet_id) return res.status(400).json({ error: 'wallet_id required' });
+
+    await prisma.$transaction([
+      prisma.walletAccount.updateMany({
+        where: { userId: req.params.id },
+        data: { is_primary: false },
+      }),
+      prisma.walletAccount.update({
+        where: { id: wallet_id, userId: req.params.id },
+        data: { is_primary: true },
+      }),
+    ]);
+
+    delKeys([`users:profile:${req.params.id}`]);
+    res.json({ success: true });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Failed to update primary wallet' });
+  }
+});
