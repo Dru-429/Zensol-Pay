@@ -260,6 +260,7 @@ export default function Transfer() {
         peerId={peerId}
         peerUsername={isSelf ? user?.username : peer?.username}
         peerFullName={isSelf ? user?.profile?.full_name : peer?.profile?.full_name}
+        peerAvatar={isSelf ? user?.profile?.avatar_url : peer?.profile?.avatar_url}
         recipientPubkey={recipientPk}
         recipientWallets={peer?.wallets || []}
         onComplete={() => {
