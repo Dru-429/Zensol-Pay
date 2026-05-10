@@ -112,9 +112,9 @@ export default function Dashboard() {
           <button
             type="button"
             onClick={openReceiveQr}
-            className="rounded-xl border border-border-color bg-card p-3 hover:bg-surface-strong h-20 w-18 flex justify-center items-center"
+            className="rounded-xl border border-border-color bg-card p-3 hover:bg-surface-strong h-20 w-18 flex justify-center items-center flex-col "
           >
-            <QrCode className="h-10 w-10 text-secondary-text" />
+            <QrCode className="h-10 w-10 text-accent" />
           </button>
 
           <button
@@ -123,7 +123,7 @@ export default function Dashboard() {
             className="rounded-xl border border-border-color bg-card p-3 text-secondary-text hover:bg-surface-strong h-20 w-18 flex justify-center items-center"
             title="Wallet"
           >
-            <Wallet className="h-10 w-10" />
+            <Wallet className="h-10 w-10 text-accent" />
           </button>
 
           <button
@@ -132,18 +132,18 @@ export default function Dashboard() {
             className="rounded-xl border border-border-color bg-card p-3 text-secondary-text hover:bg-surface-strong h-20 w-18 flex justify-center items-center"
             title="Wallet"
           >
-            <Coins className="h-10 w-10" />
+            <Coins className="h-10 w-10 text-accent" />
           </button>
 
           <div
             className="rounded-xl border border-border-color bg-card p-1 text-secondary-text h-20 w-18 flex flex-col justify-center items-center"
             title="Wallet"
           >
-            <span className="text-xl font-bold">
+            <span className="text-xl font-bold text-accent">
               {user?.profile?.trust_score ?? "—"}
             </span>
 
-            <span className="text-xs tracking-tighter">
+            <span className="text-xs tracking-tighter text-accent">
               Trust Score
             </span>
           </div>
@@ -183,7 +183,7 @@ export default function Dashboard() {
       </section>
 
       <section className="px-4 pt-6">
-        <h2 className="mb-3 text-sm font-medium text-secondary-text">People</h2>
+        <h2 className="mb-3 text-sm font-medium text-secondary-text">Contacts</h2>
         <div className="space-y-2">
           {user && (
             <Link
