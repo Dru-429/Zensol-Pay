@@ -1,5 +1,7 @@
 const API = import.meta.env.VITE_API_URL || '';
 
+export const DEFAULT_AVATAR = '/default_dp.png';
+
 export function getToken() {
   return localStorage.getItem('solpay_token');
 }

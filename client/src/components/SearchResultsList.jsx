@@ -1,5 +1,6 @@
 import { ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { DEFAULT_AVATAR } from '../lib/api.js';
 
 function PersonRow({ item }) {
   const name = item.display_name || item.full_name || `@${item.username}`;
@@ -9,8 +10,12 @@ function PersonRow({ item }) {
       to={`/profile/${item.userId}`}
       className="flex items-center gap-3 rounded-2xl border border-border-soft bg-card px-3 py-3 hover:bg-surface-strong transition-colors"
     >
-      <div className="avatar-gradient flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-accent">
-        {name.slice(0, 1).toUpperCase()}
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border-soft overflow-hidden bg-surface-strong">
+        <img 
+          src={item.avatar_url || DEFAULT_AVATAR} 
+          alt="" 
+          className="h-full w-full object-cover"
+        />
       </div>
       <div className="min-w-0 flex-1">
         <p className="truncate font-medium text-primary-text">{name}</p>

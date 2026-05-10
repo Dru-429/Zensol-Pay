@@ -15,7 +15,7 @@ import {
   DollarSign,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext.jsx";
-import { api } from "../lib/api.js";
+import { api, DEFAULT_AVATAR } from "../lib/api.js";
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
@@ -66,10 +66,12 @@ export default function Dashboard() {
         <div className="mb-3 flex items-center justify-between">
           <Link to={`/profile/${user?.id}`} className=" flex items-center gap-3">
             <div>
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-200 text-lg font-bold text-accent">
-                {(user?.profile?.full_name || `@${user?.username}`)
-                  .slice(0, 1)
-                  .toUpperCase()}
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border-soft overflow-hidden bg-surface-strong">
+                <img 
+                  src={user?.profile?.avatar_url || DEFAULT_AVATAR} 
+                  alt="" 
+                  className="h-full w-full object-cover"
+                />
               </div>
             </div>
             <div className="flex flex-col">
@@ -128,8 +130,8 @@ export default function Dashboard() {
             title="Wallet"
           >
             {/* <Coins className="h-8 w-8" /> */}
-            <DollarSign className="h-10 w-10"/>
-          
+            <DollarSign className="h-10 w-10" />
+
           </button>
 
           <div
@@ -166,10 +168,12 @@ export default function Dashboard() {
               to={`/profile/${c.contact_user_id}`}
               className="flex w-20 shrink-0 flex-col items-center gap-1"
             >
-              <div className="avatar-gradient flex h-16 w-16 items-center justify-center rounded-full text-lg font-bold text-accent">
-                {(c.display_name || c.contactUser?.username || "?")
-                  .slice(0, 1)
-                  .toUpperCase()}
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-surface-strong overflow-hidden border border-border-soft">
+                <img 
+                  src={c.contactUser?.profile?.avatar_url || DEFAULT_AVATAR} 
+                  alt="" 
+                  className="h-full w-full object-cover"
+                />
               </div>
               <span className="max-w-full truncate text-center text-xs text-secondary-text">
                 {c.display_name || c.contactUser?.profile?.full_name || `@${c.contactUser?.username}`}
@@ -188,10 +192,12 @@ export default function Dashboard() {
               to="/transfer/self"
               className="flex items-center gap-3 border-b border-border-soft px-3 py-3 hover:bg-surface-strong transition-colors"
             >
-              <div className="avatar-gradient flex h-11 w-11 items-center justify-center rounded-full text-lg font-bold text-accent ">
-                {((user?.profile?.full_name || user?.username || "?")
-                  .slice(0, 1)
-                  .toUpperCase())}
+              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-surface-strong overflow-hidden border border-border-soft">
+                <img 
+                  src={user?.profile?.avatar_url || DEFAULT_AVATAR} 
+                  alt="" 
+                  className="h-full w-full object-cover"
+                />
               </div>
               <div className="min-w-0 flex-1">
                 <p className="truncate font-medium text-primary-text">
@@ -210,10 +216,12 @@ export default function Dashboard() {
               to={`/transfer/${c.contact_user_id}`}
               className="flex items-center gap-3 border-b border-border-soft px-3 py-3 hover:bg-surface-strong transition-colors"
             >
-              <div className="avatar-gradient flex h-11 w-11 items-center justify-center rounded-full text-lg font-bold text-accent">
-                {(c.display_name || c.contactUser?.username || "?")
-                  .slice(0, 1)
-                  .toUpperCase()}
+              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-surface-strong overflow-hidden border border-border-soft">
+                <img 
+                  src={c.contactUser?.profile?.avatar_url || DEFAULT_AVATAR} 
+                  alt="" 
+                  className="h-full w-full object-cover"
+                />
               </div>
               <div className="min-w-0 flex-1">
                 <p className="truncate font-medium text-primary-text">

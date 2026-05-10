@@ -4,7 +4,7 @@ import { ArrowLeft, MoveDownIcon, Pencil, Save, Send } from 'lucide-react';
 import { FiLink, FiTwitter, FiLinkedin } from 'react-icons/fi';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../context/AuthContext.jsx';
-import { api } from '../lib/api.js';
+import { api, DEFAULT_AVATAR } from '../lib/api.js';
 
 function shortAddress(address) {
   if (!address) return 'No wallet linked';
@@ -153,8 +153,12 @@ export default function Profile() {
 
       <section className="rounded-3xl border border-border-color bg-card p-4">
         <div className="flex items-start gap-4">
-          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border border-border-soft text-2xl font-semibold text-accent bg-gradient-to-br from-accent/10 to-semantic-up/10">
-            {(profileUser.profile?.full_name || profileUser.username || '?').slice(0, 1).toUpperCase()}
+          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border border-border-soft overflow-hidden bg-surface-strong">
+            <img 
+              src={profileUser.profile?.avatar_url || DEFAULT_AVATAR} 
+              alt="" 
+              className="h-full w-full object-cover"
+            />
           </div>
           <div className="min-w-0 flex-1">
             <p className="truncate text-xl font-semibold text-primary-text">{profileUser.profile?.full_name || `@${profileUser.username}`}</p>
@@ -264,7 +268,7 @@ export default function Profile() {
                 </span>
               </Link>
             </div>
-            
+
             <div className="mt-3">
               <select
                 value={primaryWalletId}
@@ -278,7 +282,7 @@ export default function Profile() {
                 <option value="" disabled>Select primary wallet</option>
                 {profileUser?.wallets?.map((w) => (
                   <option key={w.id} value={w.id}>
-                  {w.label || 'Wallet'} ({shortAddress(w.public_address)})
+                    {w.label || 'Wallet'} ({shortAddress(w.public_address)})
                   </option>
                 ))}
               </select>

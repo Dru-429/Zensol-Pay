@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, MessageCircle, UserCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
+import { DEFAULT_AVATAR } from '../lib/api.js';
 
 const RupeeIcon = ({ className }) => (
   <div className={`flex items-center justify-center rounded-full border-2 border-current w-6 h-6 ${className}`}>
@@ -53,11 +54,11 @@ export default function Navbar() {
       label: 'You',
       icon: (isActive) => (
         <div className={`p-1 px-5 rounded-full transition-all duration-300 ${isActive ? 'bg-[#D1E9FF] text-[#004A77]' : 'text-[#44474E]'}`}>
-          {user?.profile?.avatar_url ? (
-            <img src={user.profile.avatar_url} alt="Profile" className="w-6 h-6 rounded-full object-cover" />
-          ) : (
-            <UserCircle className="w-6 h-6" />
-          )}
+          <img 
+            src={user?.profile?.avatar_url || DEFAULT_AVATAR} 
+            alt="Profile" 
+            className="w-6 h-6 rounded-full object-cover" 
+          />
         </div>
       ),
       path: `/profile/${user?.id}`,
@@ -68,10 +69,10 @@ export default function Navbar() {
     <nav className="max-w-md mx-auto fixed bottom-0 left-0 right-0 bg-[#F0F4F9] border-t border-[#DDE3EA] py-2 pb-safe z-50">
       <div className="flex justify-around items-center max-w-md mx-auto ">
         {navItems.map((item) => {
-          const isActive = item.path === '/' 
-            ? location.pathname === '/' 
+          const isActive = item.path === '/'
+            ? location.pathname === '/'
             : location.pathname.startsWith(item.path);
-          
+
           return (
             <Link
               key={item.label}
