@@ -27,7 +27,7 @@ export default function Login() {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 bg-surface">
-      <h1 className="mb-2 text-3xl font-bold tracking-tight text-primary-text">SolPay</h1>
+      <h1 className="mb-2 text-3xl font-bold tracking-tight text-primary-text">ZenSol Pay</h1>
       <p className="mb-8 text-sm text-secondary-text">Sign in with your account</p>
       <form onSubmit={onSubmit} className="space-y-4">
         <div>
@@ -64,7 +64,7 @@ export default function Login() {
         </Link>
       </p>
       <p className="mt-4 text-center text-xs text-muted-text">
-        Demo: alice@solpay.demo / demo1234
+        Demo: alice@ZenSol Pay.demo / demo1234
       </p>
     </div>
   );

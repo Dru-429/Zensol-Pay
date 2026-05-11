@@ -49,7 +49,7 @@ export default function Chats() {
     const url = encodeURL({
       recipient: new PublicKey(pk),
       amount: new BigNumber(0),
-      label: "SolPay",
+      label: "ZenSol Pay",
       message: `Pay @${user?.username}`,
     });
     setPayUrl(url.toString());
@@ -67,9 +67,9 @@ export default function Chats() {
           <Link to={`/profile/${user?.id}`} className=" flex items-center gap-3">
             <div>
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border-soft overflow-hidden bg-surface-strong">
-                <img 
-                  src={user?.profile?.avatar_url || DEFAULT_AVATAR} 
-                  alt="" 
+                <img
+                  src={user?.profile?.avatar_url || DEFAULT_AVATAR}
+                  alt=""
                   className="h-full w-full object-cover"
                 />
               </div>
@@ -122,9 +122,9 @@ export default function Chats() {
               className="flex w-20 shrink-0 flex-col items-center gap-1"
             >
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-surface-strong overflow-hidden border border-border-soft">
-                <img 
-                  src={c.contactUser?.profile?.avatar_url || DEFAULT_AVATAR} 
-                  alt="" 
+                <img
+                  src={c.contactUser?.profile?.avatar_url || DEFAULT_AVATAR}
+                  alt=""
                   className="h-full w-full object-cover"
                 />
               </div>
@@ -146,9 +146,9 @@ export default function Chats() {
               className="flex items-center gap-3 border-b border-border-soft px-3 py-3 hover:bg-surface-strong transition-colors"
             >
               <div className="flex h-11 w-11 items-center justify-center rounded-full bg-surface-strong overflow-hidden border border-border-soft">
-                <img 
-                  src={user?.profile?.avatar_url || DEFAULT_AVATAR} 
-                  alt="" 
+                <img
+                  src={user?.profile?.avatar_url || DEFAULT_AVATAR}
+                  alt=""
                   className="h-full w-full object-cover"
                 />
               </div>
@@ -170,9 +170,9 @@ export default function Chats() {
               className="flex items-center gap-3 border-b border-border-soft px-3 py-3 hover:bg-surface-strong transition-colors"
             >
               <div className="flex h-11 w-11 items-center justify-center rounded-full bg-surface-strong overflow-hidden border border-border-soft">
-                <img 
-                  src={c.contactUser?.profile?.avatar_url || DEFAULT_AVATAR} 
-                  alt="" 
+                <img
+                  src={c.contactUser?.profile?.avatar_url || DEFAULT_AVATAR}
+                  alt=""
                   className="h-full w-full object-cover"
                 />
               </div>

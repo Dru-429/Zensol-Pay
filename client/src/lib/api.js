@@ -3,12 +3,12 @@ const API = import.meta.env.VITE_API_URL || '';
 export const DEFAULT_AVATAR = '/default_dp.png';
 
 export function getToken() {
-  return localStorage.getItem('solpay_token');
+  return localStorage.getItem('ZenSol Pay_token');
 }
 
 export function setToken(t) {
-  if (t) localStorage.setItem('solpay_token', t);
-  else localStorage.removeItem('solpay_token');
+  if (t) localStorage.setItem('ZenSol Pay_token', t);
+  else localStorage.removeItem('ZenSol Pay_token');
 }
 
 async function request(path, options = {}) {

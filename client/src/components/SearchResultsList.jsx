@@ -11,9 +11,9 @@ function PersonRow({ item }) {
       className="flex items-center gap-3 rounded-2xl border border-border-soft bg-card px-3 py-3 hover:bg-surface-strong transition-colors"
     >
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border-soft overflow-hidden bg-surface-strong">
-        <img 
-          src={item.avatar_url || DEFAULT_AVATAR} 
-          alt="" 
+        <img
+          src={item.avatar_url || DEFAULT_AVATAR}
+          alt=""
           className="h-full w-full object-cover"
         />
       </div>
@@ -44,7 +44,7 @@ export default function SearchResultsList({ results }) {
       )}
       {global.length > 0 && (
         <section>
-          <h3 className="mb-2 text-sm font-medium text-secondary-text">All people on SolPay</h3>
+          <h3 className="mb-2 text-sm font-medium text-secondary-text">All people on ZenSol Pay</h3>
           <div className="space-y-2">
             {global.map((item) => (
               <PersonRow key={`g-${item.userId}`} item={item} />

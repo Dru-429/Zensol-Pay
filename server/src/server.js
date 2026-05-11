@@ -22,7 +22,7 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-app.get('/health', (_req, res) => res.json({ ok: true, service: 'solpay-api' }));
+app.get('/health', (_req, res) => res.json({ ok: true, service: 'ZenSol Pay-api' }));
 
 app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
@@ -37,5 +37,5 @@ app.use((err, _req, res, _next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`SolPay API listening on http://localhost:${PORT}`);
+  console.log(`ZenSol Pay API listening on http://localhost:${PORT}`);
 });

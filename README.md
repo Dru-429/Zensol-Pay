@@ -1,12 +1,12 @@
-# SolPay
+# ZenSol Pay
 
-SolPay is a **mobile-first Solana payment prototype** inspired by Google Pay: username-based identity, a contact-centric home screen, chat-style P2P history, **standard SOL transfers** (Solana Pay QR + `@solana/web3.js`), **shielded sends** via [**Cloak**](https://www.npmjs.com/package/@cloak-dev/sdk), and **live portfolio data** from the [**Dune Sim SVM Balances API**](https://docs.sim.dune.com/svm/balances).
+ZenSol Pay is a **mobile-first Solana payment prototype** inspired by Google Pay: username-based identity, a contact-centric home screen, chat-style P2P history, **standard SOL transfers** (Solana Pay QR + `@solana/web3.js`), **shielded sends** via [**Cloak**](https://www.npmjs.com/package/@cloak-dev/sdk), and **live portfolio data** from the [**Dune Sim SVM Balances API**](https://docs.sim.dune.com/svm/balances).
 
 This repo is structured as a lean **12-hour hackathon MVP**: `/client` (Vite + React + Tailwind + wallet adapter) and `/server` (Express + Prisma + PostgreSQL).
 
 ## Architecture
 
-- **Auth:** Email + password, `bcrypt` hashing, **JWT** returned in JSON and set as an **httpOnly cookie** (`solpay_token`). The SPA stores the same token in `localStorage` for `Authorization: Bearer` calls.
+- **Auth:** Email + password, `bcrypt` hashing, **JWT** returned in JSON and set as an **httpOnly cookie** (`ZenSol Pay_token`). The SPA stores the same token in `localStorage` for `Authorization: Bearer` calls.
 - **Identity:** Each `User` has a unique `username`. `WalletAccount` stores their Solana **public** address (never a private key). `GET /api/users/resolve?username=` maps `@alice` → primary `public_address`.
 - **Contacts / chat:** `Contact` rows power **Recent** (horizontal) and **People** (vertical). `/transfer/:id` loads **messages** and **transfers** between the logged-in user and the peer, rendered as a single timeline (text bubbles + payment bubbles).
 - **Standard pay:** The browser wallet signs a `SystemProgram.transfer`. The hash is persisted in `Transfer.tx_hash`.

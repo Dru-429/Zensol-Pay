@@ -75,7 +75,7 @@ export default function Wallet() {
     const url = encodeURL({
       recipient: new PublicKey(selected),
       amount: new BigNumber(0),
-      label: 'SolPay',
+      label: 'ZenSol Pay',
       message: `Pay @${user?.username}`,
     });
     setPayUrl(url.toString());
@@ -198,7 +198,7 @@ export default function Wallet() {
               <p className="text-sm font-semibold text-primary-text">${money(t.value_usd)}</p>
             </div>
           ))}
-      {!loading && !err && tokens.length === 0 && (
+          {!loading && !err && tokens.length === 0 && (
             <p className="text-sm text-secondary-text">No tokens found.</p>
           )}
         </div>

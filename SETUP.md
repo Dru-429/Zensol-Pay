@@ -1,4 +1,4 @@
-# SolPay — setup (quick)
+# ZenSol Pay — setup (quick)
 
 ## Prerequisites
 
@@ -19,7 +19,7 @@ npx prisma db push
 npm run db:seed
 npm run dev
 ```
-//Seed OK. Demo login: alice@solpay.demo / demo1234
+//Seed OK. Demo login: alice@ZenSol Pay.demo / demo1234
 API: `http://localhost:4000`
 
 ## 2. Client
@@ -35,7 +35,7 @@ App: `http://localhost:5173`
 
 ## 3. Try the demo
 
-1. Sign in as **alice@solpay.demo** / **demo1234** (from seed).
+1. Sign in as **alice@ZenSol Pay.demo** / **demo1234** (from seed).
 2. Home shows **Recent** and **People** (Bob, Carol).
 3. Open a contact → chat + **Pay** (connect Phantom/Solflare on devnet for real txs).
 4. Tap **Check balance** (uses Dune Sim for the resolved wallet address).

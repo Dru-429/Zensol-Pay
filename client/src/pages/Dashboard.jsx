@@ -49,7 +49,7 @@ export default function Dashboard() {
     const url = encodeURL({
       recipient: new PublicKey(pk),
       amount: new BigNumber(0),
-      label: "SolPay",
+      label: "ZenSol Pay",
       message: `Pay @${user?.username}`,
     });
     setPayUrl(url.toString());
@@ -67,9 +67,9 @@ export default function Dashboard() {
           <Link to={`/profile/${user?.id}`} className=" flex items-center gap-3">
             <div>
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border-soft overflow-hidden bg-surface-strong">
-                <img 
-                  src={user?.profile?.avatar_url || DEFAULT_AVATAR} 
-                  alt="" 
+                <img
+                  src={user?.profile?.avatar_url || DEFAULT_AVATAR}
+                  alt=""
                   className="h-full w-full object-cover"
                 />
               </div>
@@ -168,9 +168,9 @@ export default function Dashboard() {
               className="flex w-20 shrink-0 flex-col items-center gap-1"
             >
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-surface-strong overflow-hidden border border-border-soft">
-                <img 
-                  src={c.contactUser?.profile?.avatar_url || DEFAULT_AVATAR} 
-                  alt="" 
+                <img
+                  src={c.contactUser?.profile?.avatar_url || DEFAULT_AVATAR}
+                  alt=""
                   className="h-full w-full object-cover"
                 />
               </div>
@@ -192,9 +192,9 @@ export default function Dashboard() {
               className="flex items-center gap-3 border-b border-border-soft px-3 py-3 hover:bg-surface-strong transition-colors"
             >
               <div className="flex h-11 w-11 items-center justify-center rounded-full bg-surface-strong overflow-hidden border border-border-soft">
-                <img 
-                  src={user?.profile?.avatar_url || DEFAULT_AVATAR} 
-                  alt="" 
+                <img
+                  src={user?.profile?.avatar_url || DEFAULT_AVATAR}
+                  alt=""
                   className="h-full w-full object-cover"
                 />
               </div>
@@ -216,9 +216,9 @@ export default function Dashboard() {
               className="flex items-center gap-3 border-b border-border-soft px-3 py-3 hover:bg-surface-strong transition-colors"
             >
               <div className="flex h-11 w-11 items-center justify-center rounded-full bg-surface-strong overflow-hidden border border-border-soft">
-                <img 
-                  src={c.contactUser?.profile?.avatar_url || DEFAULT_AVATAR} 
-                  alt="" 
+                <img
+                  src={c.contactUser?.profile?.avatar_url || DEFAULT_AVATAR}
+                  alt=""
                   className="h-full w-full object-cover"
                 />
               </div>
@@ -239,7 +239,7 @@ export default function Dashboard() {
       {qrOpen && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4">
           <div className="w-full max-w-sm rounded-3xl border border-border-color bg-surface p-6 text-center shadow-xl">
-            <h3 className="mb-4 font-semibold text-primary-text">Receive with Sol Pay</h3>
+            <h3 className="mb-4 font-semibold text-primary-text">Receive with ZenSol Pay</h3>
             <div className="mx-auto mb-4 flex justify-center rounded-2xl bg-white p-3">
               <QRCodeSVG value={payUrl} size={200} />
             </div>

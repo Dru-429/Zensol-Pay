@@ -18,7 +18,7 @@ async function rpcCall(method, params = []) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       jsonrpc: '2.0',
-      id: 'solpay',
+      id: 'ZenSol Pay',
       method,
       params,
     }),
