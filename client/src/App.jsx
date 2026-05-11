@@ -10,6 +10,7 @@ import SearchPage from './pages/Search.jsx';
 import PubkeyLookupPage from './pages/PubkeyLookup.jsx';
 import Navbar from './components/Navbar.jsx';
 import Chats from './pages/chats.jsx';
+import Landing from './pages/Landing.jsx';
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
@@ -24,6 +25,18 @@ function PrivateRoute({ children }) {
   return children;
 }
 
+function HomeRoute() {
+  const { user, loading } = useAuth();
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center text-slate-400">
+        Loading…
+      </div>
+    );
+  }
+  return user ? <Dashboard /> : <Landing />;
+}
+
 export default function App() {
   return (
     <div className="bg-zinc-950">
@@ -32,11 +45,7 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route
           path="/"
-          element={
-            <PrivateRoute>
-              <Dashboard />
-            </PrivateRoute>
-          }
+          element={<HomeRoute />}
         />
         <Route
           path="/transfer/:id"
