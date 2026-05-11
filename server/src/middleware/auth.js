@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-const COOKIE_NAME = 'ZenSol Pay_token';
+const COOKIE_NAME = 'zensolpay_token';
 
 export function getCookieName() {
   return COOKIE_NAME;

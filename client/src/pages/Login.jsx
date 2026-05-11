@@ -64,7 +64,7 @@ export default function Login() {
         </Link>
       </p>
       <p className="mt-4 text-center text-xs text-muted-text">
-        Demo: alice@ZenSol Pay.demo / demo1234
+        Demo: alice@zensolpay.demo / demo1234
       </p>
     </div>
   );

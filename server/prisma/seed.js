@@ -12,10 +12,10 @@ async function main() {
   const password_hash = await bcrypt.hash('demo1234', 10);
 
   const alice = await prisma.user.upsert({
-    where: { email: 'alice@ZenSol Pay.demo' },
+    where: { email: 'alice@zensolpay.demo' },
     update: {},
     create: {
-      email: 'alice@ZenSol Pay.demo',
+      email: 'alice@zensolpay.demo',
       username: 'alice',
       password_hash,
       profile: {
@@ -38,10 +38,10 @@ async function main() {
   });
 
   const bob = await prisma.user.upsert({
-    where: { email: 'bob@ZenSol Pay.demo' },
+    where: { email: 'bob@zensolpay.demo' },
     update: {},
     create: {
-      email: 'bob@ZenSol Pay.demo',
+      email: 'bob@zensolpay.demo',
       username: 'bob',
       password_hash,
       profile: {
@@ -63,10 +63,10 @@ async function main() {
   });
 
   const carol = await prisma.user.upsert({
-    where: { email: 'carol@ZenSol Pay.demo' },
+    where: { email: 'carol@zensolpay.demo' },
     update: {},
     create: {
-      email: 'carol@ZenSol Pay.demo',
+      email: 'carol@zensolpay.demo',
       username: 'carol',
       password_hash,
       profile: {
@@ -149,7 +149,7 @@ async function main() {
     },
   });
 
-  console.log('Seed OK. Demo login: alice@ZenSol Pay.demo / demo1234');
+  console.log('Seed OK. Demo login: alice@zensolpay.demo / demo1234');
 }
 
 main()
