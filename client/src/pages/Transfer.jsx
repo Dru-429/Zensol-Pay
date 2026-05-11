@@ -157,11 +157,11 @@ export default function Transfer() {
           if (item.kind === "separator") {
             return (
               <div key={item.id} className="flex items-center my-6">
-                <div className="flex-1 h-[1px] bg-border-color/30"></div>
+                <div className="flex-1 h-[1px] bg-border-color"></div>
                 <span className="px-4 text-[11px] text-secondary-text font-medium">
                   {item.label}
                 </span>
-                <div className="flex-1 h-[1px] bg-border-color/30"></div>
+                <div className="flex-1 h-[1px] bg-border-color"></div>
               </div>
             );
           }
