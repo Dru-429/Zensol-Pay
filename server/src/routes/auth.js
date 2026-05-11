@@ -102,6 +102,8 @@ authRouter.post('/logout', (req, res) => {
   res.json({ ok: true });
 });
 
+import { refreshUserTrustScore } from '../services/trustScore.js';
+
 authRouter.get('/me', async (req, res) => {
   const header = req.headers.authorization;
   let token = null;
@@ -115,6 +117,10 @@ authRouter.get('/me', async (req, res) => {
       include: { profile: true, wallets: true },
     });
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
+    
+    // Trigger background refresh of trust score (will only run if > 3 days old)
+    refreshUserTrustScore(user.id).catch(e => console.error('Background Trust Score Error:', e));
+
     res.json({
       user: {
         id: user.id,

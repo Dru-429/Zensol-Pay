@@ -32,7 +32,8 @@ model UserProfile {
   full_name   String?
   avatar_url  String?
   bio         String?
-  trust_score Int     @default(100)
+  trust_score Int     @default(50)
+  trust_score_updated_at DateTime?
 }
 
 model WalletAccount {
