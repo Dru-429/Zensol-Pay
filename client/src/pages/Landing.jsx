@@ -1,10 +1,13 @@
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Lenis from "lenis";
 import { ScanLine, ShieldCheck, AtSign, Smartphone, MessageSquare } from "lucide-react";
 
 export default function Landing() {
+  const { scrollY } = useScroll();
+  const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
+
   useEffect(() => {
     const lenis = new Lenis();
     let rafId;
@@ -45,12 +48,15 @@ export default function Landing() {
         </nav>
 
         {/* Hero content */}
-        <div className="relative z-10 flex h-[calc(100vh-6rem)] flex-col items-center justify-center px-6 text-center">
+        <motion.div 
+          style={{ opacity: heroOpacity }}
+          className="relative z-10 flex h-[calc(100vh-6rem)] flex-col items-center justify-center px-6 text-center"
+        >
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease: "easeOut" }}
-            className="max-w-4xl text-5xl font-bold leading-tight tracking-tight text-[#0a1f44] sm:text-6xl md:text-6xl"
+            className="max-w-4xl text-5xl font-bold leading-tight tracking-tight text-[#0a1f44] sm:text-6xl md:text-7xl"
             style={{ fontFamily: "Inter, sans-serif" }}
           >
             Making Payment
@@ -72,7 +78,7 @@ export default function Landing() {
               Sign in
             </Link>
           </motion.div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Bento Section */}
