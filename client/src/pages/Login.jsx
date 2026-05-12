@@ -27,8 +27,11 @@ export default function Login() {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 bg-surface">
-      <h1 className="mb-2 text-3xl font-bold tracking-tight text-primary-text">ZenSol Pay</h1>
-      <p className="mb-8 text-sm text-secondary-text">Sign in with your account</p>
+      <div className="mb-8 flex flex-col items-center text-center">
+        <img src="/favicon.png" alt="Logo" className="mb-4 h-12 w-12 drop-shadow-md" />
+        <h1 className="mb-2 text-3xl font-bold tracking-tight text-primary-text">ZenSol Pay</h1>
+        <p className="text-sm text-secondary-text">Sign in with your account</p>
+      </div>
       <form onSubmit={onSubmit} className="space-y-4">
         <div>
           <label className="mb-1 block text-xs text-secondary-text">Email</label>

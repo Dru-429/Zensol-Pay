@@ -239,7 +239,10 @@ export default function Dashboard() {
       {qrOpen && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4">
           <div className="w-full max-w-sm rounded-3xl border border-border-color bg-surface p-6 text-center shadow-xl">
-            <h3 className="mb-4 font-semibold text-primary-text">Receive with ZenSol Pay</h3>
+            <h3 className="mb-4 font-semibold text-primary-text flex items-center justify-center gap-2">
+              <img src="/favicon.png" alt="Logo" className="h-5 w-5 drop-shadow-sm" />
+              Receive with ZenSol Pay
+            </h3>
             <div className="mx-auto mb-4 flex justify-center rounded-2xl bg-white p-3">
               <QRCodeSVG value={payUrl} size={200} />
             </div>

@@ -34,9 +34,12 @@ export default function Landing() {
 
         {/* Navbar */}
         <nav className="fixed left-1/2 -translate-x-1/2 z-50 mx-auto mt-6 flex w-[90%] max-w-4xl items-center justify-between rounded-full border border-white/30 bg-white/15 px-6 py-3 backdrop-blur-xl shadow-lg">
-          <span className="text-xl font-semibold italic tracking-tight text-zinc-" style={{ fontFamily: "Inter, sans-serif" }}>
-            ZenSol.pay
-          </span>
+          <div className="flex items-center gap-2">
+            <img src="/favicon.png" alt="Logo" className="h-7 w-7" />
+            <span className="text-xl font-semibold italic tracking-tight text-zinc-" style={{ fontFamily: "Inter, sans-serif" }}>
+              ZenSol.pay
+            </span>
+          </div>
           <div className="flex items-center gap-3">
             <Link to="/login" className="rounded-full px-4 py-1.5 text-sm font-medium text-zinc-800 hover:text-zinc-950 hover:scale-[1.03] transition">
               Sign in
@@ -134,7 +137,7 @@ export default function Landing() {
           <div className="mt-10 rounded-3xl border border-blue-200/70 bg-white/70 p-6 shadow-[0_10px_40px_-10px_rgb(37,99,235,0.2)] backdrop-blur-sm">
             <div className="flex items-center justify-between gap-2 border-b border-blue-100 pb-4" style={{ fontFamily: "Inter, sans-serif" }}>
               <div className="flex gap-2 items-center">
-                <span className="inline-block h-5 w-5 rounded-full bg-gradient-to-br from-[#3B82F6] to-[#0a1f44]" />
+                <img src="/favicon.png" alt="Logo" className="h-6 w-6 drop-shadow-sm" />
                 <span className="text-sm font-medium text-[#0a1f44]">ZenSol</span>
               </div>
 
