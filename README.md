@@ -1,6 +1,6 @@
 # ZenSol Pay
 
-![ZenSol Pay OpenGraph Banner](public/opengraph-image.png)
+![ZenSol Pay OpenGraph Banner](/client/public/opengraph-image.png)
 
 > **"Making Payment Private & Simple"** > A premium, mobile-first Web3 peer-to-peer payment network built for the **Solana Frontier Hackathon**. 
 
