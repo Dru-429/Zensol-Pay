@@ -1,84 +1,58 @@
 # ZenSol Pay
 
-ZenSol Pay is a **mobile-first Solana payment prototype** inspired by Google Pay: username-based identity, a contact-centric home screen, chat-style P2P history, **standard SOL transfers** (Solana Pay QR + `@solana/web3.js`), **shielded sends** via [**Cloak**](https://www.npmjs.com/package/@cloak-dev/sdk), and **live portfolio data** from the [**Dune Sim SVM Balances API**](https://docs.sim.dune.com/svm/balances).
+![ZenSol Pay OpenGraph Banner](public/opengraph-image.png)
 
-This repo is structured as a lean **12-hour hackathon MVP**: `/client` (Vite + React + Tailwind + wallet adapter) and `/server` (Express + Prisma + PostgreSQL).
+> **"Making Payment Private & Simple"** > A premium, mobile-first Web3 peer-to-peer payment network built for the **Solana Frontier Hackathon**. 
 
-## Architecture
+ZenSol Pay brings the familiar, frictionless user experience of modern mobile banking (like Google Pay) to the high-performance Solana ecosystem. Engineered with an absolute emphasis on privacy, speed, and minimalism, the platform lets users transact instantly via simple usernames while keeping complex public keys and transaction history shielded beneath deep cryptography.
 
-- **Auth:** Email + password, `bcrypt` hashing, **JWT** returned in JSON and set as an **httpOnly cookie** (`ZenSol Pay_token`). The SPA stores the same token in `localStorage` for `Authorization: Bearer` calls.
-- **Identity:** Each `User` has a unique `username`. `WalletAccount` stores their Solana **public** address (never a private key). `GET /api/users/resolve?username=` maps `@alice` → primary `public_address`.
-- **Contacts / chat:** `Contact` rows power **Recent** (horizontal) and **People** (vertical). `/transfer/:id` loads **messages** and **transfers** between the logged-in user and the peer, rendered as a single timeline (text bubbles + payment bubbles).
-- **Standard pay:** The browser wallet signs a `SystemProgram.transfer`. The hash is persisted in `Transfer.tx_hash`.
-- **Shielded pay:** The **privacy toggle** runs **Cloak in the browser** (`createSignerFromAdapter` + `CloakSDK`). The server only exposes **relayer URL + ALT** via `GET /api/wallet/cloak-config` and an optional `GET /api/wallet/cloak-health` probe (no private keys on the server).
-- **Balances:** `GET /api/wallet/balances/:address` proxies Dune Sim `GET https://api.sim.dune.com/beta/svm/balances/{address}` with `X-Sim-Api-Key`, then returns a compact **SOL / USDC / total USD** summary for the dashboard sheet.
+---
 
-## Prisma schema (summary)
+## ✨ Product Highlights & Core Features
 
-| Model        | Purpose |
-|-------------|---------|
-| `User`      | `email`, unique `username`, `password_hash` |
-| `UserProfile` | `full_name`, `avatar_url`, `bio`, `trust_score` (default 100) |
-| `WalletAccount` | `public_address`, `label`, `is_primary` |
-| `Contact`   | `owner_id`, `contact_user_id`, `display_name`, `is_recent` |
-| `Transfer`  | `amount_ui`, `amount_usd`, `status`, `is_private`, `tx_hash` |
-| `Message`   | `text`, optional `related_transfer_id` |
+* **📱 Identity-First UX:** Say goodbye to copying and pasting 44-character public keys. Search, find, and pay friends using simple `@username` handles.
+* **💬 Conversational Transacting:** Payments shouldn't feel like filling out forms. ZenSol Pay features a unified chat timeline combining real-time text messaging with interactive payment bubbles.
+* **🛡️ Cryptographic Privacy (Shielded Mode):** Powered by the [**Cloak SDK**](https://www.npmjs.com/package/@cloak-dev/sdk), users can toggle a high-performance privacy layer directly inside the client browser. Shielded transfers leverage zero-knowledge primitives and Address Lookup Tables (ALTs) to decouple the sender from the recipient on-chain.
+* **📊 Institutional-Grade Analytics:** Real-time asset balances, portfolio monitoring, and multi-token valuation summaries derived instantly via the [**Dune Sim SVM Balances API**](https://docs.sim.dune.com/svm/balances).
+* **⚡ High-Fidelity Mechanics:** Completely responsive, optimized design that delivers smooth transitions and native app interactions built for instant execution.
 
-Full definitions: `server/prisma/schema.prisma`.
+---
 
-## Environment variables
+## 🛠️ Architecture Overview
 
-### Server (`server/.env`)
+ZenSol Pay was completely architected and shipped as a lean **12-hour hackathon MVP** featuring a robust, decoupled architecture:
+* **Frontend (`/client`):** React, Vite, Tailwind CSS, Framer Motion, and `@solana/wallet-adapter-react`.
+* **Backend (`/server`):** Node.js, Express, Prisma ORM, and PostgreSQL.
 
-| Variable | Description |
-|----------|-------------|
-| `DATABASE_URL` | Neon (or any) PostgreSQL URL |
-| `JWT_SECRET` | Long random string for JWT signing |
-| `PORT` | Default `4000` |
-| `CLIENT_ORIGIN` | Vite origin, e.g. `http://localhost:5173` |
-| `DUNE_SIM_API_KEY` | From [Sim by Dune](https://sim.dune.com/) |
-| `CLOAK_RELAYER_URL` | Cloak relayer base URL (required for real shielded sends) |
-| `SOLANA_CLUSTER` | Optional: `mainnet-beta` or `devnet` |
-| `SOLANA_RPC_URL` | Optional RPC override |
-| `CLOAK_ALT_ADDRESS` | Optional; defaults to known Cloak ALT for cluster |
+### 🔐 Security Implementation
+* **Zero-Custody Server:** The backend *never* touches or stores user private keys. All cryptographic signatures occur purely on the client side via the user's connected browser wallet.
+* **Secure Authentication Flows:** Protected endpoints use `bcrypt` password hashing alongside high-entropy **JSON Web Tokens (JWT)** issued simultaneously through an `httpOnly` secure cookie (`ZenSol Pay_token`) and fallback `Authorization: Bearer` storage.
 
-### Client (`client/.env`)
+---
 
-| Variable | Description |
-|----------|-------------|
-| `VITE_API_URL` | Leave empty in dev to use same-origin `/api` proxy; set to `http://localhost:4000` if not proxying |
-| `VITE_SOLANA_CLUSTER` | `devnet` or `mainnet-beta` |
-| `VITE_SOLANA_RPC` | Optional RPC URL for the wallet `ConnectionProvider` |
+## 💾 Prisma Data Schema
 
-## Primary frontend modules
+The relational database layer uses a highly optimized, relationally mapped structure to process both communication and state transitions simultaneously:
 
-- **`src/pages/Dashboard.jsx`** — GPay-style shell: search, Solana Pay receive QR, recent + people lists, **Check balance** (Dune).
-- **`src/components/PrivatePaymentSheet.jsx`** — Pay sheet with **Privacy mode (Cloak)** toggle; standard vs shielded execution; records `Transfer` + `Message` after success.
-- **`src/pages/Transfer.jsx`** — Chat thread with merged **messages** and **transfers**.
-- **`src/lib/cloakTransfer.js`** — Cloak `fullTransfer` with **fallback** `depositSol` + `withdrawSol` to recipient.
+| Model | Purpose | Main Structural Attributes |
+| :--- | :--- | :--- |
+| **`User`** | Global account entity | Unique `email`, unique `@username`, password crypts. |
+| **`UserProfile`** | Public presentation layer | `full_name`, `avatar_url`, and a modular dynamic `trust_score`. |
+| **`WalletAccount`** | Verified cluster addresses | Mapped `public_address`, user assignments, primary states. |
+| **`Contact`** | Personalized graph index | `owner_id`, mapped target relationships, sorting parameters. |
+| **`Transfer`** | Cryptographic ledger states | Native `amount_ui`, fiat exchange value `amount_usd`, `is_private` flag, `tx_hash`. |
+| **`Message`** | Communication timeline data | Raw conversational text threads explicitly linked to transfers. |
 
-## API outline
+---
 
-| Method | Path | Notes |
-|--------|------|--------|
-| POST | `/api/auth/register` | Optional `public_address` seeds primary wallet |
-| POST | `/api/auth/login` | Sets cookie + returns `token` |
-| GET | `/api/auth/me` | Current user + profile + wallets |
-| GET | `/api/users/resolve?username=` | Username → Solana pubkey |
-| GET | `/api/users/:id` | Peer profile (auth) |
-| GET | `/api/contacts` | Contacts for current user |
-| GET | `/api/transfers/with/:userId` | Pairwise transfers |
-| POST | `/api/transfers` | Record completed on-chain tx |
-| GET/POST | `/api/messages/...` | Chat |
-| GET | `/api/wallet/balances/:address` | Dune Sim summary |
-| GET | `/api/wallet/cloak-config` | Relayer + ALT for client Cloak |
+## ⚙️ Environment Configuration
 
-## Security notes (MVP)
-
-- Shielded flows depend on **real Cloak infrastructure** (relayer, cluster, funded wallet). Without `CLOAK_RELAYER_URL`, the UI explains the missing config.
-- Never store **private keys** in Postgres; only public addresses.
-- Use **HTTPS** and a strong `JWT_SECRET` in production.
-
-## License
-
-Hackathon prototype — use and modify freely for Solana Frontier.
+### Backend Layer (`server/.env`)
+```env
+DATABASE_URL="postgresql://..."            # Neon or native PostgreSQL connection string
+JWT_SECRET="your_high_entropy_secret"       # Random key used for verifying active sessions
+PORT=4000                                  # Target local execution runtime port
+CLIENT_ORIGIN="http://localhost:5173"      # Whitelisted origin cross-origin requests (CORS)
+DUNE_SIM_API_KEY="your_dune_sim_key"       # Core analytics ingestion authorization token
+CLOAK_RELAYER_URL="https://..."            # Fully qualified Cloak infrastructure endpoint
+SOLANA_CLUSTER="devnet"                    # Targeting node behavior cluster environments
