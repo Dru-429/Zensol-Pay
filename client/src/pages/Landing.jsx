@@ -36,7 +36,7 @@ export default function Landing() {
         <nav className="fixed left-1/2 -translate-x-1/2 z-50 mx-auto mt-6 flex w-[90%] max-w-4xl items-center justify-between rounded-full border border-white/30 bg-white/15 px-6 py-3 backdrop-blur-xl shadow-lg">
           <div className="flex items-center gap-2">
             <img src="/favicon.png" alt="Logo" className="h-7 w-7" />
-            <span className="text-xl font-semibold italic tracking-tight text-zinc-" style={{ fontFamily: "Inter, sans-serif" }}>
+            <span className="text-xl font-semibold italic tracking-tight text-zinc-950" style={{ fontFamily: "Inter, sans-serif" }}>
               ZenSol.pay
             </span>
           </div>
